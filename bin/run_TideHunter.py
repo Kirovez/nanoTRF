@@ -10,6 +10,7 @@ class TideHunter_run():
         self.threads = THthreads
         self.outFasta = outFasta
         self.outTab = outFasta + '.tab'
+        self.outFasta_all_monomersTH = outFasta + '_all_monomersTH.fasta'
         self.log_th = getLog(log_file, "TideHunter")
         self._run_TH()
         self._tab2fasta()

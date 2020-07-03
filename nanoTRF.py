@@ -23,6 +23,7 @@ class nanoTRF():
         self.TH_path = pathTH
         self.threads = threads
         self.outTH_fasta_name = self.outDirectory + "/TH.out.fasta"
+        self.outFasta_all_monomersTH = ''
         self.TH_data = ''
 
         ####################################
@@ -32,12 +33,22 @@ class nanoTRF():
         self.wordsize = 22
         self.evalue = 2
         self.edge_list_after_blast_file = ''
+
+        ##########################################
+        ###############CLUSTERING################
+        self.clustering_outTab = ''
+
+        ###MAIN###
         self.main()
 
 
 
     def main(self):
+
+        ##READ PREPARATION##
         self.read_data = read_preparation.PrepareReads(self.reads)
+
+        #########TH##########
         self.TH_data = run_TideHunter.TideHunter_run(self.TH_path, self.read_data.read_file, self.outTH_fasta_name,
                                                      self.threads, self.log_file)
         self.TH_raw_tab = self.TH_data.outTab
@@ -47,8 +58,11 @@ class nanoTRF():
         self.edge_list_after_blast_file = blast_module_data.edge_list_file
 
 
-        ##Clusetering##
-        Louv_clustering.LouvClustering(self.edge_list_after_blast_file, self.outDirectory, self.log_file)
+        ##Clustering##
+        Lc = Louv_clustering.LouvClustering(self.edge_list_after_blast_file, self.outDirectory, self.log_file)
+        self.clustering_outTab = Lc.clustering_outTab
+
+        ##Collect sequences for each cluster##
 
 
 
