@@ -1,6 +1,8 @@
 from bin import read_preparation
 from bin import run_TideHunter
 from bin import Louv_clustering
+from bin import FilterRep
+from bin import Consensus_Assembly
 from bin.helpers.help_functions import checkDir_or_create
 from bin.helpers.help_functions import getLog
 from bin import run_BLAST
@@ -58,20 +60,31 @@ class nanoTRF():
         self.edge_list_after_blast_file = blast_module_data.edge_list_file
 
 
-        ##Clustering##
-        Lc = Louv_clustering.LouvClustering(self.edge_list_after_blast_file, self.outDirectory, self.log_file)
-        self.clustering_outTab = Lc.clustering_outTab
+        ##Clusetering##
+        louv_module_data=Louv_clustering.LouvClustering(self.edge_list_after_blast_file, self.outDirectory, self.log_file)
 
-        ##Collect sequences for each cluster##
+        ###Filtering##
+        self.clustering_outTab=louv_module_data.clustering_outTab
+        self.Filt_data=FilterRep.FilteringLouvTab(self.clustering_outTab,self.outDirectory,self.TH_all_monomers)
+        self.tableFilt=Filt_data.filtering_outTab
+
+
+        ###Canu###
+        Consensus_Assembly.ConsAssembly(self.tableFilt,self.outDirectory)
 
 
 
 
-if __name__ == '__main__':
-    import sys
-    args = sys.argv
-    if args[1] == 'test':
-        nanoTRF(r'./test_seq/test_seq.fa')
+if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(description='A tool to clustering sequences in fasta file and searching  '
+                                                 'consensus among the many sequences for each cluster')
+    parser.add_argument("reads", help="Path to FastQ or Fasta file")
+    parser.add_argument("out_directory", help="Path to work directory for output files where will be saved")
+    #parser.add_argument("-path_TH",  help="Path to the location of the TideHunter")
+    args = parser.parse_args()
+    if not os.path.isfile(args.reads):
+        print("File {} not found!".format(args.reads))
     else:
-        # nanoTRF(r'C:\Users\ikirov\Google Диск\Bioinformatics_2018\practice\seq.fastq')
-        nanoTRF(sys.argv[1])
+        print("File {} found...".format(args.reads))
+    nanoTRF(args.reads, args.out_directory)
