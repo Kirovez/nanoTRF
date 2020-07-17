@@ -54,4 +54,4 @@ class ConsAssembly():
         with open(self.consensus,'w') as ConensusFile:
             for consSeq in contigs_list:
                 ConensusFile.write(consSeq+'\n')
-             ConsensusFile.close()
+ 
