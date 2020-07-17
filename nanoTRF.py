@@ -87,4 +87,4 @@ if __name__ == "__main__":
         print("File {} not found!".format(args.reads))
     else:
         print("File {} found...".format(args.reads))
-    nanoTRF(args.reads, args.out_directory)
+        nanoTRF(args.reads, args.out_directory)
