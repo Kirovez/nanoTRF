@@ -35,4 +35,4 @@ class FilteringLouvTab():
                         # >5595e42b-2e17-44b8-b30c-0aa68887a559_rep1_sub0/56
                         reFSeqMnm = '>{0}/{1}{2}{3}{2}'.format(seq.id, numClust, '\n', seq.seq)
                         fastaWr.write(reFSeqMnm)
-        fastaWr.close()
+      
