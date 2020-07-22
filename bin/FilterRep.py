@@ -17,12 +17,13 @@ class FilteringLouvTab():
         with open(self.clustering_outTab) as LouvTab:
             listFiltRep=[]
             for seqId in LouvTab:
-                seq_id=seqId.split('\t')[0]
-                numCl=seqId.split('\t')[-1]
-                countRep=float(seq_id.split('*')[-1])
-                if countRep>5:
+                 if not seqId.startswith('Sequence'):
+                    seq_id=seqId.split('\t')[0]
+                    numCl=seqId.split('\t')[-1]
+                    countRep=float(seq_id.split('*')[-1])
+                    if countRep>5:
                 #d4e9d1ee-f7b1-48e7-b8b8-dc7f10aa8435*rep0*368*2.4/0
-                    listFiltRep.append('{0}/{1}'.format(seq_id,numCl))
+                        listFiltRep.append('{0}/{1}'.format(seq_id,numCl))
         return listFiltRep
     def main(self,list_Rep):
         with open(self.filtering_outTab,'w') as fastaWr:
