@@ -54,6 +54,7 @@ class nanoTRF():
         self.TH_data = run_TideHunter.TideHunter_run(self.TH_path, self.read_data.read_file, self.outTH_fasta_name,
                                                      self.threads, self.log_file)
         self.TH_raw_tab = self.TH_data.outTab
+        self.TH_all_monomers=self.TH_data.outFasta_all_monomersTH
 
         ##BLAST run###
         blast_module_data = run_BLAST.run_BLAST(self.TH_data.outFasta, self.outFile, self.threads, self.wordsize, self.evalue, self.log_file)
