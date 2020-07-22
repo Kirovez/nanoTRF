@@ -77,13 +77,14 @@ class nanoTRF():
 
 if __name__ == "__main__":
     import argparse
+    import os.path
     parser = argparse.ArgumentParser(description='A tool to clustering sequences in fasta file and searching  '
                                                  'consensus among the many sequences for each cluster')
     parser.add_argument("reads", help="Path to FastQ or Fasta file")
     parser.add_argument("out_directory", help="Path to work directory for output files where will be saved")
     #parser.add_argument("-path_TH",  help="Path to the location of the TideHunter")
     args = parser.parse_args()
-    if not os.path.isfile(args.reads):
+    if not os.path.exists(args.reads):
         print("File {} not found!".format(args.reads))
     else:
         print("File {} found...".format(args.reads))
