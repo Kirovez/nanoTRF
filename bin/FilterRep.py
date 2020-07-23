@@ -14,42 +14,41 @@ class FilteringLouvTab():
         
         
     def createListRep(self):
+        listFiltRep={} 
         with open(self.clustering_outTab) as LouvTab:
-            listFiltRep=[]
-            for seqId in LouvTab:
+            for seqId in LouvTab: ### seq_id*rep0*len*nrepeats \t cluster 
                  if not seqId.startswith('Sequence'):
-                    seq_id=seqId.split('\t')[0]
-                    numCl=seqId.split('\t')[-1]
+                    sp = seqId.rstrip().split('\t')
+                    seq_id=sp[0]
+                    numCl=sp[-1]
                     countRep=float(seq_id.split('*')[-1])
                     if countRep>5:
                 #d4e9d1ee-f7b1-48e7-b8b8-dc7f10aa8435*rep0*368*2.4/0
-                        listFiltRep.append('{0}/{1}'.format(seq_id,numCl))
+                        listFiltRep[seq_id] = numCl
         return listFiltRep
+   
     
- def main(self,list_Rep):
+    def main(self,list_Rep):
         with open(self.filtering_outTab,'w') as fastaWr:
             seq_monomer = {}
             for seq in SeqIO.parse(self.THall_monomers, 'fasta'):
                 seqID = '*'.join(seq.id.split('_')[0:2])
+             
                 if seqID not in seq_monomer:
                     seq_monomer[seqID] = {}
                 if seq.id not in seq_monomer[seqID]:
-                    seq_monomer[seqID][seq.description] = str(seq.seq)
-            seq_list={}
-            for repSeq in list_Rep:
-                numClust = repSeq.split('/')[-1].rstrip('\n')
-                reFormLV = '*'.join(repSeq.split('*')[0:2])
-                if reFormLV not in seq_list:
-                    seq_list[reFormLV]=repSeq
-                    #d4e9d1ee-f7b1-48e7-b8b8-dc7f10aa8435*rep0: d4e9d1ee-f7b1-48e7-b8b8-dc7f10aa8435*rep0*368*2.4/0
-            for reSeq in seq_list:
-                nClust=seq_list[reSeq].split('/')[-1]
+                    seq_monomer[seqID][seq.description] = str(seq.seq)           
+            for reSeq in list_Rep:
+                nClust=list_Rep[reSeq]
                 if reSeq in seq_monomer:
-                  
-                    for key in seq_monomer[reSeq]:
-                   
+                    for key in seq_monomer[reSeq]:                   
+                        reFSeqMnm = '>{0}/{1}\n{2}\n'.format(key, nClust, seq_monomer[reSeq][key]')
+              
+                        fastaWr.write(reFSeqMnm)
+      
                         reFSeqMnm = '>{0}/{1}{2}{3}'.format(key, nClust, seq_monomer[reSeq][key],'\n')
-                   
                         fastaWr.write(reFSeqMnm)
                         
-      
+    
+    
+
