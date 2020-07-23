@@ -23,16 +23,31 @@ class FilteringLouvTab():
                 if countRep>5:
                 #d4e9d1ee-f7b1-48e7-b8b8-dc7f10aa8435*rep0*368*2.4/0
                     listFiltRep.append('{0}/{1}'.format(seq_id,numCl))
-        return listFiltRep
+        return listFiltRep    
+    
     def main(self,list_Rep):
         with open(self.filtering_outTab,'w') as fastaWr:
+            seq_monomer = {}
+            for seq in SeqIO.parse(self.THall_monomers, 'fasta'):
+                seqID = '*'.join(seq.id.split('_')[0:2])
+                if seqID not in seq_monomer:
+                    seq_monomer[seqID] = {}
+                if seq.id not in seq_monomer[seqID]:
+                    seq_monomer[seqID][seq.description] = str(seq.seq)
+            seq_list={}
             for repSeq in list_Rep:
                 numClust = repSeq.split('/')[-1].rstrip('\n')
                 reFormLV = '*'.join(repSeq.split('*')[0:2])
-                for seq in SeqIO.parse(self.THall_monomers,'fasta'):
-                    seqID='*'.join(seq.id.split('_')[0:2])
-                    if reFormLV==seqID:
-                        # >5595e42b-2e17-44b8-b30c-0aa68887a559_rep1_sub0/56
-                        reFSeqMnm = '>{0}/{1}{2}{3}{2}'.format(seq.id, numClust, '\n', seq.seq)
+                if reFormLV not in seq_list:
+                    seq_list[reFormLV]=repSeq
+                    #d4e9d1ee-f7b1-48e7-b8b8-dc7f10aa8435*rep0: d4e9d1ee-f7b1-48e7-b8b8-dc7f10aa8435*rep0*368*2.4/0
+            for reSeq in seq_list:
+                nClust=seq_list[reSeq].split('/')[-1]
+                if reSeq in seq_monomer:
+                  
+                    for key in seq_monomer[reSeq]:
+                        reFSeqMnm = '>{0}/{1}{2}{3}'.format(key, nClust, seq_monomer[reSeq][key],'\n')
                         fastaWr.write(reFSeqMnm)
-      
+                        
+    
+    
