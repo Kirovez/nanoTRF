@@ -74,7 +74,7 @@ class nanoTRF():
 
         ###Filtering##
         self.clustering_outTab=louv_module_data.clustering_outTab
-        Filt_data=FilterRep.FilteringLouvTab(self.clustering_outTab,self.outDirectory,self.TH_all_monomers,self.minAbundancy,self.log_file)
+        Filt_data=FilterRep.FilteringLouvTab(self.clustering_outTab,self.outDirectory,self.reads,self.TH_all_monomers,self.minAbundancy,self.log_file)
         self.tableFilt=Filt_data.filtering_outTab
 
 
