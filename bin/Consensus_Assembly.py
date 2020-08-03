@@ -4,14 +4,16 @@ from Bio import AlignIO
 from Bio import SeqIO
 
 class ConsAssembly():
-    def __init__(self,filtering_outTab,outdir,log_file,min_overlap,consensus_name):
+    def __init__(self,canu,filtering_outTab,outdir,log_file,min_overlap,consensus_name):
         self.filtering_outTab=filtering_outTab
         self.min_overlap=min_overlap
         self.consensus_name=consensus_name
         self.outdir=outdir
         self.outdir_clust=outdir+'/clusters/'
         self.outdir_canu=outdir+'/canu/'
-        self.canuRun="/home/liza/Tools/canu-2.0/Linux-amd64/bin/canu"
+        self.canuRun=canu
+        self.canu_log = getLog(log_file, "Consensus assembly")
+        self.canu_log.info("CONSENSUS ASSEMBLY has started...")
         self.createfile()
         self.dirFile_canu=self.runCanu()        
         self.writeFileCan()
@@ -43,14 +45,9 @@ class ConsAssembly():
             self.canu_log.info("!!ERROR!! Directory specified 'canu' exists.Please check the directory")
         else:
             os.mkdir(self.outdir_canu)
-            self.canu_log.info("Directory 'canu' has created")
-        
-        
-        
-
-   
+            self.canu_log.info("Directory 'canu' has created")          
+          
             for fasta in os.listdir(self.outdir_clust):
-
                 name_Dir=fasta.split('.fasta')[0]
                 path_Dir=self.outdir_canu+name_Dir
                 os.mkdir(path_Dir)
