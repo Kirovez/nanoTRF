@@ -8,8 +8,8 @@ from bin.helpers.help_functions import getLog
 import os
 
 class run_BLAST():
-    def __init__(self, inFile, outFile, threads, wordsize, evalue, log_file):
-        self.inFile, self.outFile, self.threads, self.wordsize, self.evalue = inFile, outFile, threads, wordsize, evalue
+    def __init__(self,blast_run,makedb,inFile, outFile, threads, wordsize, evalue, log_file):
+        self.blast_run,self.makedb,self.inFile, self.outFile, self.threads, self.wordsize, self.evalue = blast_run,makedb,inFile, outFile, threads, wordsize, evalue
         self.bl_log = getLog(log_file, "BLAST module")
         self.edge_list_file = outFile + "edges.list"
         self.main()
@@ -32,11 +32,11 @@ class run_BLAST():
 
     def main(self):
         self.bl_log.info("BLAST database is making")
-        os.system('makeblastdb -dbtype nucl -in {0} -out {0}'.format(self.inFile))
+        os.system('{0} -dbtype nucl -in {1} -out {1}'.format(self.makedb,self.inFile))
 
         self.bl_log.info("BLAST is running")
-        os.system('blastn -query {0} -outfmt 6 -db  {0} -out {1} -window_size 22 -num_threads {2} -evalue {3}'.format(
-             self.inFile, self.outFile, self.threads, self.evalue
+        os.system('{0} -query {1} -outfmt 6 -db  {1} -out {2} -window_size {3} -num_threads {4} -evalue {5}'.format(
+             self.blast_run,self.inFile, self.outFile, self.wordsize, self.threads, self.evalue
          ))
 
         self.filterOut_table()
