@@ -120,5 +120,5 @@ if __name__ == "__main__":
         print("File {} not found!".format(args.reads))
     else:
         print("File {} found...".format(args.reads))
-         nanoTRF(reads=args.reads, path_TH=args.path_TH,canu=args.canu, out_directory=args.out_directory,blast=args.blast, makedb=args.makedb,wordsize=args.wordsize, evalue=args.evalue,minAbundancy=args.max_abundancy, consensus_name=args.consensus_name,
+        nanoTRF(reads=args.reads, path_TH=args.path_TH,canu=args.canu, out_directory=args.out_directory,blast=args.blast, makedb=args.makedb,wordsize=args.wordsize, evalue=args.evalue,minAbundancy=args.max_abundancy, consensus_name=args.consensus_name,
                 threads=args.threads, log_name=args.log_file, min_overlap=args.min_Overlap, opt_delete=args.opt_delete)
