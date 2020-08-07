@@ -47,12 +47,6 @@ class FilteringLouvTab():
                         self.filt_log.info("Repeat number of the{0} less than 5, doesn't come into the further analysis".format(seq_id.rstrip()))
         self.filt_log.info('Length reads is {}'.format(len_reads))
         self.filt_log.info("Selection of high-copy clusters(with summary length of the tandem repeats in cluster > 100 thousand nucleotides)...") 
-        
-        #for i in listFiltRep:
-         #   if cluster_abundancy[listFiltRep[i]] / float(len_reads) > float(self.minAbundancy):
-          #      dictRep = {'*'.join(i.split('*')[0:2]): listFiltRep[i]}
-           # else:
-            #    self.filt_log.info("{0} has abundancy less than 0,01 % of genome. {1} doesn't come into the further analysis".format(listFiltRep[i], i))        
         dictRep = {'*'.join(i.split('*')[0:2]):listFiltRep[i] for i in listFiltRep if cluster_abundancy[listFiltRep[i]] / float(len_reads) > float(self.minAbundancy)}
         return dictRep
    
