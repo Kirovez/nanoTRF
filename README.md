@@ -1,7 +1,6 @@
 <img src="nanoTRF.png" width="550" >
 
-# NanoTRF: software tool to *de novo* search high-copy tandem repeats in Oxford Nanopore Technologies (ONT) plant DNA sequencing data
-
+# NanoTRF: a pipeline for *de novo* identification and sequence assembly of high-copy tandem repeats in raw Oxford Nanopore plant DNA sequencing data
 
 
 ## Table of Contents
@@ -97,6 +96,9 @@ python3 ./nanoTRF.py -r test.fasta -pTH ./bin/TideHunter -cu ./bin/canu ./test/ 
 **Ilya Kirov**
 
 **Elizaveta Kolganova**
+
+## Acknowledgement
+The project was financially supported by Russian Foundation for Basic Research (RFBR project № 17-00-00336)
 
 ## <a name="license"></a>License
 This project is licensed under the **MIT** License
