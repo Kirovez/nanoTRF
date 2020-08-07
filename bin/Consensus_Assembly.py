@@ -33,7 +33,6 @@ class ConsAssembly():
         dir_canu=[]
         os.mkdir(self.outdir_canu)
         for fasta in os.listdir(self.outdir_clust):
-            print(fasta)
             name_Dir=fasta.split('.fasta')[0]
             path_Dir=self.outdir_canu+fasta.split('.fasta')[0]
             os.mkdir(path_Dir)
@@ -42,16 +41,20 @@ class ConsAssembly():
             dir_canu.append(path_Dir)
 
 
-    def writeFileCan(self):
+   def writeFileCan(self):
         contigs_list=[]
-        for dirClust in os.listdir(self.outdir_canu):
-            for fasta in os.listdir(self.outdir_canu+dirClust+'/'):
-                if fasta.endswith('.contigs.fasta'):
-                    for seq in SeqIO.parse(self.outdir_canu+dirClust+'/'+fasta,'fasta'):
-                        seq_id = '>{0}/{1}'.format(seq.description, fasta.split('.contig')[0])
-                        seq_p = '{0}{1}{2}{1}'.format(seq_id, '\n', seq.seq)
-                        contigs_list.append(seq_p)
-        with open(self.consensus,'w') as ConensusFile:
-            for consSeq in contigs_list:
-                ConensusFile.write(consSeq+'\n')
+        with open(self.consensus,'w') as ConsensusFile:
+            for dirClust in os.listdir(self.outdir_canu):
+                for fasta in os.listdir(self.outdir_canu+dirClust+'/'):
+                    if fasta.endswith('.contigs.fasta'):
+                        len_max=0
+                        name_tig=''                    
+                        for seq in SeqIO.parse(self.outdir_canu+dirClust+'/'+fasta,'fasta'):                  
+                            len_reads= float(seq.description.split(' ')[2].split('=')[-1])
+                            if len_reads>len_max:
+                                len_max =len_reads                                                                           
+                                seq_id = '>{0}/{1}'.format(seq.description, fasta.split('.contig')[0])
+                                seq_p = '{0}\n{1}\n'.format(seq_id,seq.seq)
+                                name_tig=seq_p
+                        ConsensusFile.write(name_tig)
  
