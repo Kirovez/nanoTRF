@@ -37,8 +37,7 @@ class FilteringLouvTab():
                     abund_seq=countRep * countLen                   
                     #numCl:abundancy - 45:556455
                     cluster_abundancy[numCl] += abund_seq                      
-                    if countRep>5:
-                #d4e9d1ee-f7b1-48e7-b8b8-dc7f10aa8435*rep0*368*2.4/0
+                    if countRep>5:  #d4e9d1ee-f7b1-48e7-b8b8-dc7f10aa8435*rep0*368*2.4/0
                         listFiltRep[seq_id] = numCl
                     else:
                         self.filt_log.info("Repeat number of the{0} less than 5, doesn't come into the further analysis".format(seq_id.rstrip()))                        
