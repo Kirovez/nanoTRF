@@ -40,7 +40,7 @@ class FilteringLouvTab():
                     if countRep>5:
                 #d4e9d1ee-f7b1-48e7-b8b8-dc7f10aa8435*rep0*368*2.4/0
                         listFiltRep[seq_id] = numCl
-                     else:
+                    else:
                         self.filt_log.info("Repeat number of the{0} less than 5, doesn't come into the further analysis".format(seq_id.rstrip()))                        
         self.filt_log.info('Length reads is {}'.format(len_reads))
         self.filt_log.info("Selection of high-copy clusters(with summary length of the tandem repeats in cluster > 100 thousand nucleotides)...")     
