@@ -7,28 +7,17 @@ from bin.helpers.help_functions import getLog
 class Run_TRF():
     def __init__(self,TRF,consensus_name,outdir, log_name):
         self.outdir=outdir
-        self.dir_trf=outdir+'/TRF/'
         self.run_TRF=TRF
         self.log_file = self.outdir+ '/' + log_name
         self.consensus_name=consensus_name
         self.file_num = 'TRF_seq.fasta'
         self.filt_trf = 'seqFilt_trf.fasta'
         self.TRF_log=getLog(self.log_file,'TRF')
-        self.createdir()
         self.TRF()
         self.filt_tr()
-
-    def createdir(self):
-        self.TRF_log.info('Module Run_TRF has started the job')
-        if os.path.exists(self.dir_trf):
-
-            self.TRF_log.info("!!ERROR!! Directory specified 'TRF' exists.Please check the directory")
-        else:
-            os.mkdir(self.dir_trf)
-            self.TRF_log.info("Directory 'TRF' has created")
-            self.TRF_log.info("Creating files with consensus sequences for each monomer has started..")
-
     def TRF(self):
+        self.TRF_log.info('Module Run_TRF has started the job')
+        self.TRF_log.info("Creating files with consensus sequences for each monomer has started..")        
         run_trf='{0} {1} 2 7 7 80 10 50 500'.format(self.run_TRF,self.consensus_name)
         self.TRF_log.info('TRF has started')
         os.system(run_trf)
