@@ -1,3 +1,6 @@
+"""
+Module to remove unnecessary large files and directories from working directory.
+"""
 from bin.helpers.help_functions import getLog
 import os
 import argparse
@@ -7,9 +10,10 @@ import shutil
 
 
 class Delete_direct():
-    def __init__(self, dir_clust, dir_canu,opt_delete,log_file):
+    def __init__(self, dir_clust, dir_canu,dir_reblast, opt_delete,log_file):
         self.outdir_clust = dir_clust
         self.outdir_canu = dir_canu
+        self.outdir_reblast=dir_reblast
         self.del_log = getLog(log_file, "DELETE")
 
 
@@ -21,7 +25,8 @@ class Delete_direct():
         if self.opt_delete == 'd':
             self.del_log.info("Removing directories has started...")
             shutil.rmtree(self.outdir_canu)
-            shutil.rmtree(self.outdir_clust)                                 
+            shutil.rmtree(self.outdir_clust)    
+            shutil.rmtree(self.outdir_reblast)
             
             
         elif self.opt_delete == 'c':
