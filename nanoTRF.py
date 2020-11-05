@@ -1,3 +1,20 @@
+"""
+NanoTRF is a pipeline for de novo identification and sequence assembly of high-copy tandem repeats in raw data ONT plant DNA data,
+to calculate TRs copy number variation and assembly consensus sequences for further analyses (e.g. FISH). 
+
+NanoTRF-based TRs search and reconstruction of the consensus sequences has seven main steps: 
+    - tandem repeat detection (1) - module run_TideHunter,
+    - searching for similarity in previously identifying on the 1st step tandem repeats (2) - module run_BLAST,
+    - clustering repeat sequences (3) - module Louv_clustering,
+    - selection of the high-copy TRs (4) - module FiltRep,
+    - producing consensus sequences (5) - module Consensus_Assembly, 
+    - location pattern TRs (6) - module Run_TRF ,
+    - re-clustering obtained TRs pattern (7) - module Reclustering. 
+
+"""
+
+
+
 from bin import read_preparation
 from bin import run_TideHunter
 from bin import Louv_clustering
@@ -7,10 +24,12 @@ from bin.helpers.help_functions import checkDir_or_create
 from bin.helpers.help_functions import getLog
 from bin import run_BLAST
 from bin import Delete_dir
+from bin import Run_TRF
+from bin import Reclustering
 import os
 
 class nanoTRF():
-    def __init__(self, reads, path_TH, canu,out_directory,blast, makedb,wordsize,evalue,minAbundancy,consensus_name,threads,log_name,min_overlap, opt_delete):
+    def __init__(self, reads, path_TH, canu,out_directory,blast, makedb,wordsize,wordsize_f,evalue,minAbundancy,consensus_name,threads,log_name,min_overlap, opt_delete):
         self.outDirectory = checkDir_or_create(out_directory)
         self.reads = reads
         self.log_file = self.outDirectory + '/' + log_name
@@ -48,6 +67,10 @@ class nanoTRF():
         self.min_overlap = min_overlap
         self.consensus_name = self.outDirectory + '/'+consensus_name
         self.opt_delete = opt_delete
+        
+        ### Reclustering###
+        self.wordsize_f=wordsize_f
+        
         ###MAIN###
         self.main()
 
@@ -69,7 +92,7 @@ class nanoTRF():
         self.edge_list_after_blast_file = blast_module_data.edge_list_file
 
 
-        ##Clusetering##
+        ##Clustering##
         louv_module_data=Louv_clustering.LouvClustering(self.edge_list_after_blast_file, self.outDirectory, self.log_file)
 
         ###Filtering##
@@ -78,15 +101,30 @@ class nanoTRF():
         
         Filt_data=FilterRep.FilteringLouvTab(self.clustering_outTab,self.outDirectory,self.reads,self.TH_all_monomers,self.minAbundancy,self.log_file)
         self.tableFilt=Filt_data.filtering_outTab
+        self.abund_tab=Filt_data.clust_abund
 
 
         ###Canu###
         consensus_out=Consensus_Assembly.ConsAssembly(self.canu,self.tableFilt,self.outDirectory,self.log_file,self.min_overlap, self.consensus_name)
         self.dir_clust=consensus_out.outdir_clust
         self.dir_canu=consensus_out.outdir_canu
+        
+        
+        ###TRF###
+        
+        TRF_out=Run_TRF.Run_TRF(self.path_TRF,self.consensus_name,self.log_file)
+        self.re_blast=TRF_out.dir_trf
+        self.trf_seq=TRF_out.file_trf
+        
+        
+        ###Reclustering###
+        
+        reclust_out=Reclustering.Reclustering(self.blast_run,self.makedb,self.threads, self.word_trf, self.trf_seq,self.outDirectory, self.abund_tab,self.log_file)
+        
+        
         ###Delete directories###
        
-        Delete_dir.Delete_direct(self.dir_clust,self.dir_canu,self.opt_delete,self.log_file)
+        Delete_dir.Delete_direct(self.dir_clust,self.dir_canu,self.re_blast, self.opt_delete,self.log_file)
 
 
 
@@ -104,6 +142,7 @@ if __name__ == "__main__":
     parser.add_argument("-bn","--blast", help="Path to blastn executabled",default='blastn')
     parser.add_argument("-mb","--makedb", help='Path to makeblastdb executable', default='makeblastdb')
     parser.add_argument("-w","--wordsize", help='Word size for wordfinder algorithm (length of best perfect match)', default=22)
+    parser.add_argument("-w_f","--wordsize_f", help='Word size for Reblusting(length of best perfect match)', default=15)
     parser.add_argument("-ev","--evalue", help=' Expectation value (E) threshold for saving hits', default=2)   
     parser.add_argument("-m","--max_abundancy", help="The proportion of amount lengths all tandem repeats in one cluster to length all the reads",default=0.0001)
     parser.add_argument("-cons","--consensus_name",help="File name with consensus sequences, default name - consensus.fasta",
@@ -121,5 +160,5 @@ if __name__ == "__main__":
         print("File {} not found!".format(args.reads))
     else:
         print("File {} found...".format(args.reads))
-        nanoTRF(reads=args.reads, path_TH=args.path_TH,canu=args.canu, out_directory=args.out_directory,blast=args.blast, makedb=args.makedb,wordsize=args.wordsize, evalue=args.evalue,minAbundancy=args.max_abundancy, consensus_name=args.consensus_name,
+        nanoTRF(reads=args.reads, path_TH=args.path_TH,canu=args.canu, out_directory=args.out_directory,blast=args.blast, makedb=args.makedb,wordsize=args.wordsize,wordsize_f=args.wordsize_f,evalue=args.evalue,minAbundancy=args.max_abundancy, consensus_name=args.consensus_name,
                 threads=args.threads, log_name=args.log_file, min_overlap=args.min_Overlap, opt_delete=args.opt_delete)
