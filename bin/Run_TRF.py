@@ -1,6 +1,6 @@
 """
 
-6-th module - module to locate and display TRs in sequences with using TRF
+Run_TRF module - module to locate and display TRs in sequences with using TRF
 Input arguments:TRF,consensus_name,outdir,log_file
 
 - TRF- path to the TRF
