@@ -1,6 +1,6 @@
 """
 
-7-th module - clustering searched TRF tandem repeats to group together similar TRs
+'Reclustering module' - clustering searched TRF tandem repeats to group together similar TRs
 Input arguments:blast_run, makedb,threads, word_size, trf_file,outdir,abund_f,log_file
 
 - blast_run - path to the BLAST
