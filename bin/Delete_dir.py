@@ -10,7 +10,8 @@ import shutil
 
 
 class Delete_direct():
-    def __init__(self, dir_clust, dir_canu,dir_reblast, opt_delete,log_file):
+    def __init__(self, out_dir, dir_clust, dir_canu,dir_reblast, opt_delete,log_file):
+        self.out_dir=out_dir
         self.outdir_clust = dir_clust
         self.outdir_canu = dir_canu
         self.outdir_reblast=dir_reblast
@@ -24,9 +25,16 @@ class Delete_direct():
     def del_dir(self):
         if self.opt_delete == 'd':
             self.del_log.info("Removing directories has started...")
+            #Delete an entire directory tree - ./clust/, ./canu/ and ./ReBlast/
             shutil.rmtree(self.outdir_canu)
             shutil.rmtree(self.outdir_clust)    
             shutil.rmtree(self.outdir_reblast)
+            #Delete an TRF html. reports and unnecessary BLAST files
+            for file_t in os.listdir(self.out_dir):
+                if file_t.endswith('.html') or file_t.endswith('.nhr') or file_t.endswith('.nin') or file_t.endswith('.nsq'):
+                    path_t=self.out_dir+file_t
+                    os.remove(path_t)
+                
             
             
         elif self.opt_delete == 'c':
