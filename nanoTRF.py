@@ -142,7 +142,7 @@ if __name__ == "__main__":
     parser.add_argument("-r","--reads", help="Path to FastQ or Fasta file")
     parser.add_argument("-pTH", "--path_TH", help="Path to the location of the TideHunter")
     parser.add_argument("-cu","--canu", help="Path to the location of the Canu") 
-    parser.add_argument("-trf","--TRF", help="Path to the location of the Tandem Rapeat Finder") 
+    parser.add_argument("-trf","--TRF_run", help="Path to the location of the Tandem Rapeat Finder") 
     parser.add_argument("-out","--out_directory", help="Path to work directory for output files where will be saved")
     parser.add_argument("-bn","--blast", help="Path to blastn executabled",default='blastn')
     parser.add_argument("-mb","--makedb", help='Path to makeblastdb executable', default='makeblastdb')
@@ -166,4 +166,4 @@ if __name__ == "__main__":
     else:
         print("File {} found...".format(args.reads))
         nanoTRF(reads=args.reads, path_TH=args.path_TH,canu=args.canu, out_directory=args.out_directory,blast=args.blast, makedb=args.makedb,wordsize=args.wordsize,wordsize_f=args.wordsize_f,evalue=args.evalue,minAbundancy=args.max_abundancy, consensus_name=args.consensus_name,
-                threads=args.threads, log_name=args.log_file, min_overlap=args.min_Overlap,path_TR=args.TRF,opt_delete=args.opt_delete)
+                threads=args.threads, log_name=args.log_file, min_overlap=args.min_Overlap,path_TR=args.TRF_run,opt_delete=args.opt_delete)
