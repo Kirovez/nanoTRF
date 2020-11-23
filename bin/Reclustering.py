@@ -73,11 +73,10 @@ class Reclustering():
 
     def BLAST(self):
         #all-versus-all comparisons of TRs
-        self.Reclust_log.info('BLAST database  is making')
-        f_trf=self.outdir_reblast+self.trf_file
-        os.system('{0} -in {1} -out seqdb -dbtype nucl'.format(self.makedb, f_trf))
+        self.Reclust_log.info('BLAST database  is making')      
+        os.system('{0} -in {1} -out seqdb -dbtype nucl'.format(self.makedb, self.trf_file))
         self.Reclust_log.info('Blastn with file {0} is running'.format(self.trf_file))
-        os.system("{0} -query {1} -db seqdb -out {2} -outfmt '6 qseqid sseqid pident qcovs' -num_threads {3} -word_size {4}".format(self.blast_run,f_trf, self.out_blast, self.threads,self.word_size))
+        os.system("{0} -query {1} -db seqdb -out {2} -outfmt '6 qseqid sseqid pident qcovs' -num_threads {3} -word_size {4}".format(self.blast_run,self.trf_file, self.out_blast, self.threads,self.word_size))
         #filtering  and removing similar strings and sequences with identity <80 and coverage <80
     def Blast_parsing(self):
         #parsing BLAST table
@@ -116,7 +115,7 @@ class Reclustering():
             self.Reclust_log.info('Appending the nodes and edges is done.Generate connected components\n')
             self.Reclust_log.info('Creating graph is running'+'\n')
             connected_components = nx.connected_components(Graph_TR)
-            self.Reclust_log.info("Number of clusters: ", nx.number_connected_components(Graph_TR))
+            self.Reclust_log.info('Number of clusters: {0}'.format(nx.number_connected_components(Graph_TR)))
             for num, clusters in enumerate(connected_components):
                 count_clust+=1
                 #Appending the number nodes in cluster
@@ -146,10 +145,9 @@ class Reclustering():
     def filt_clust(self,fasta_clust):
         elem_tab=[]
         abund_dict={}
-        abund_dict2={}
-        f_trf = self.outdir_reblast + self.trf_file
+        abund_dict2={}       
         with open(self.nanoTRF,'w') as tr_nano:
-            for seq in SeqIO.parse(f_trf,'fasta'):
+            for seq in SeqIO.parse(self.trf_file,'fasta'):
                 if seq.id not in fasta_clust:
                     SeqIO.write(seq,tr_nano,'fasta')
         #cons_clust48/1949_32_167|cons_clust15/1215_56_167
