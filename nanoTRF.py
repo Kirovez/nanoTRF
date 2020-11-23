@@ -116,7 +116,7 @@ class nanoTRF():
         
         ###TRF###
         
-        TRF_out=Run_TRF.Run_TRF(self.path_TRF,self.consensus_name,self.outDirectory,self.log_file)
+        TRF_out=Run_TRF.Run_TRF(self.path_TR,self.consensus_name,self.outDirectory,self.log_file)
         self.re_blast=TRF_out.dir_trf
         self.trf_seq=TRF_out.filt_trf
         
