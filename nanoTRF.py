@@ -28,7 +28,7 @@ from bin import Reclustering
 import os
 
 class nanoTRF():
-    def __init__(self, reads, path_TH, canu,out_directory,blast, makedb,wordsize,wordsize_f,evalue,minAbundancy,consensus_name,threads,log_name,min_overlap,path_TR opt_delete):
+    def __init__(self, reads, path_TH, canu,out_directory,blast, makedb,wordsize,wordsize_f,evalue,minAbundancy,consensus_name,threads,log_name,min_overlap,path_TR,opt_delete):
         self.outDirectory = checkDir_or_create(out_directory)
         self.reads = reads
         self.log_file = self.outDirectory + '/' + log_name
@@ -116,9 +116,9 @@ class nanoTRF():
         
         ###TRF###
         
-        TRF_out=Run_TRF.Run_TRF(self.path_TRF,self.consensus_name,self.log_file)
+        TRF_out=Run_TRF.Run_TRF(self.path_TRF,self.consensus_name,self.outDirectory,self.log_file)
         self.re_blast=TRF_out.dir_trf
-        self.trf_seq=TRF_out.file_trf
+        self.trf_seq=TRF_out.filt_trf
         
         
         ###Reclustering###
@@ -142,7 +142,7 @@ if __name__ == "__main__":
     parser.add_argument("-r","--reads", help="Path to FastQ or Fasta file")
     parser.add_argument("-pTH", "--path_TH", help="Path to the location of the TideHunter")
     parser.add_argument("-cu","--canu", help="Path to the location of the Canu") 
-     parser.add_argument("-trf","--TRF", help="Path to the location of the Tandem Rapeat Finder") 
+    parser.add_argument("-trf","--TRF", help="Path to the location of the Tandem Rapeat Finder") 
     parser.add_argument("-out","--out_directory", help="Path to work directory for output files where will be saved")
     parser.add_argument("-bn","--blast", help="Path to blastn executabled",default='blastn')
     parser.add_argument("-mb","--makedb", help='Path to makeblastdb executable', default='makeblastdb')
