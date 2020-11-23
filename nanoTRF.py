@@ -123,7 +123,7 @@ class nanoTRF():
         
         ###Reclustering###
         
-        reclust_out=Reclustering.Reclustering(self.blast_run,self.makedb,self.threads,self.word_trf,self.trf_seq,self.outDirectory,self.abund_tab,self.log_file)
+        reclust_out=Reclustering.Reclustering(self.blast_run,self.makedb,self.threads,self.wordsize_f,self.trf_seq,self.outDirectory,self.abund_tab,self.log_file)
         
         
         ###Delete directories###
