@@ -34,12 +34,12 @@ class Run_TRF():
         self.consensus_name=consensus_name
         self.file_num = self.dir_trf+'/TRF_seq_dr.fasta'
         self.filt_trf = self.dir_trf+ '/seqFilt_trf.fasta'
-        self.TRF_log=getLog(self.log_name,'TRF')
+        self.TRF_log=getLog(log_name,'TRF')
         self.TRF_log.info("Module Run_TRF has started the job...")
         self.createdir()
         self.TRF()
         self.filt_tr()
-     def createdir(self):  
+    def createdir(self):  
 #creating the directory 'ReBlast' for following analysis      
         if os.path.exists(self.dir_trf):
             self.TRF_log.info("!! Directory specified 'ReBlast' exists !!")
