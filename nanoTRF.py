@@ -28,7 +28,7 @@ from bin import Reclustering
 import os
 
 class nanoTRF():
-    def __init__(self, reads, path_TH, canu,out_directory,blast, makedb,wordsize,wordsize_f,evalue,minAbundancy,consensus_name,threads,log_name,min_overlap,path_TR opt_delete):
+    def __init__(self, reads, path_TH, canu,out_directory,blast, makedb,wordsize,wordsize_f,evalue,minAbundancy,consensus_name,threads,log_name,min_overlap,path_TR,opt_delete):
         self.outDirectory = checkDir_or_create(out_directory)
         self.reads = reads
         self.log_file = self.outDirectory + '/' + log_name
@@ -116,14 +116,14 @@ class nanoTRF():
         
         ###TRF###
         
-        TRF_out=Run_TRF.Run_TRF(self.path_TRF,self.consensus_name,self.log_file)
+        TRF_out=Run_TRF.Run_TRF(self.path_TR,self.consensus_name,self.outDirectory,self.log_file)
         self.re_blast=TRF_out.dir_trf
-        self.trf_seq=TRF_out.file_trf
+        self.trf_seq=TRF_out.filt_trf
         
         
         ###Reclustering###
         
-        reclust_out=Reclustering.Reclustering(self.blast_run,self.makedb,self.threads,self.word_trf,self.trf_seq,self.outDirectory,self.abund_tab,self.log_file)
+        reclust_out=Reclustering.Reclustering(self.blast_run,self.makedb,self.threads,self.wordsize_f,self.trf_seq,self.outDirectory,self.abund_tab,self.log_file)
         
         
         ###Delete directories###
@@ -142,7 +142,7 @@ if __name__ == "__main__":
     parser.add_argument("-r","--reads", help="Path to FastQ or Fasta file")
     parser.add_argument("-pTH", "--path_TH", help="Path to the location of the TideHunter")
     parser.add_argument("-cu","--canu", help="Path to the location of the Canu") 
-     parser.add_argument("-trf","--TRF", help="Path to the location of the Tandem Rapeat Finder") 
+    parser.add_argument("-trf","--TRF_run", help="Path to the location of the Tandem Rapeat Finder") 
     parser.add_argument("-out","--out_directory", help="Path to work directory for output files where will be saved")
     parser.add_argument("-bn","--blast", help="Path to blastn executabled",default='blastn')
     parser.add_argument("-mb","--makedb", help='Path to makeblastdb executable', default='makeblastdb')
@@ -166,4 +166,4 @@ if __name__ == "__main__":
     else:
         print("File {} found...".format(args.reads))
         nanoTRF(reads=args.reads, path_TH=args.path_TH,canu=args.canu, out_directory=args.out_directory,blast=args.blast, makedb=args.makedb,wordsize=args.wordsize,wordsize_f=args.wordsize_f,evalue=args.evalue,minAbundancy=args.max_abundancy, consensus_name=args.consensus_name,
-                threads=args.threads, log_name=args.log_file, min_overlap=args.min_Overlap,path_TR=args.TRF,opt_delete=args.opt_delete)
+                threads=args.threads, log_name=args.log_file, min_overlap=args.min_Overlap,path_TR=args.TRF_run,opt_delete=args.opt_delete)
