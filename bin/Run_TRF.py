@@ -12,7 +12,7 @@ Input arguments:TRF,consensus_name,outdir,log_file
 
 2. def TRF - running TRF and selecting the sequences from txt.html report
  Running TRF:
-'trf consensus.fasta 2 7 7 80 10 50 500'
+'trf consensus.fasta 2 7 7 80 10 50 1000'
 
 Selection of all consensus sequences from the TRF reports which are written into the 'TRF_seq.fasta'
 
