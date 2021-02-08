@@ -60,7 +60,7 @@ class Reclustering():
         self.blast_run,self.makedb,self.outdir,self.threads, self.word_size = blast_run,makedb,outdir, threads, word_size
         self.trf_file=trf_file
         self.outdir_reblast=self.outdir +'/ReBlast/'
-        self.out_blast=self.outdir_reblast+'/blast_sec.tab'
+        self.out_blast=self.outdir_reblast+'blast_sec.tab'
         self.out_clust = self.outdir_reblast + '/seq_clust.clst'
         self.nanoTRF=self.outdir+'/TR_nanotrf.fasta'
         self.Reclust_log=getLog(log_file,'Reclustering')
@@ -73,7 +73,8 @@ class Reclustering():
 
     def BLAST(self):
         #all-versus-all comparisons of TRs
-        self.Reclust_log.info('BLAST database  is making')      
+        self.Reclust_log.info('BLAST database  is making')
+        
         os.system('{0} -in {1} -out seqdb -dbtype nucl'.format(self.makedb, self.trf_file))
         self.Reclust_log.info('Blastn with file {0} is running'.format(self.trf_file))
         os.system("{0} -query {1} -db seqdb -out {2} -outfmt '6 qseqid sseqid pident qcovs' -num_threads {3} -word_size {4}".format(self.blast_run,self.trf_file, self.out_blast, self.threads,self.word_size))
@@ -137,6 +138,7 @@ class Reclustering():
                         ref_cent= 'cluster_{}'.format(name_centroid.split('/')[0].split('clust')[-1])
                         centroid_name.append(num)
                         clust_t.write('{0}|{1}\n'.format(ref_cent,ref_num))
+            
             self.Reclust_log.info('Searching of centroid in all clusters is done. Creating graph is running\n')
             self.Reclust_log.info('Сentroid search in clusters is done')
             self.Reclust_log.info('Creating graph is done')
@@ -145,7 +147,8 @@ class Reclustering():
     def filt_clust(self,fasta_clust):
         elem_tab=[]
         abund_dict={}
-        abund_dict2={}       
+        abund_dict2={}
+        
         with open(self.nanoTRF,'w') as tr_nano:
             for seq in SeqIO.parse(self.trf_file,'fasta'):
                 if seq.id not in fasta_clust:
