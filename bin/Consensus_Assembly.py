@@ -24,11 +24,12 @@ class ConsAssembly():
     def createfile(self):
         with open(self.filtering_outTab) as filtFasta:
             if os.path.exists(self.outdir_clust):
-                self.canu_log.info("!!ERROR!! Directory specified 'clust' exists.Please check the directory")
+                self.canu_log.info("!!ERROR!! Directory specified 'clust' exists.")
             else:
+           
                 os.mkdir(self.outdir_clust)
                 self.canu_log.info("Directory 'clust' has created")
-                self.canu_log.info("Creating file with monomer sequences for each clusters has started...")        
+            self.canu_log.info("Creating file with monomer sequences for each clusters has started...")        
           
             for seq in SeqIO.parse(filtFasta, 'fasta'):
                 name_file = 'clust{}.fasta'.format(seq.id.split('/')[-1])
@@ -40,12 +41,13 @@ class ConsAssembly():
                     t = 'a'
                 handle = open(FileFullPath,t)
                 SeqIO.write(seq,handle,'fasta')
-                    handle.close()
+                handle.close()
             self.canu_log.info("Creating all files have finished")
 
     def runCanu(self):
         if os.path.exists(self.outdir_canu):
-            self.canu_log.info("!!ERROR!! Directory specified 'canu' exists.Please check the directory")
+            self.canu_log.info("!!ERROR!! Directory specified 'canu' exists.")
+        
         else:
             os.mkdir(self.outdir_canu)
             self.canu_log.info("Directory 'canu' has created")          
@@ -55,7 +57,7 @@ class ConsAssembly():
             path_Dir=self.outdir_canu+name_Dir
             os.mkdir(path_Dir)
             run_Canu = '{0} -p {1} -d {2} useGrid=0 -nanopore-raw {3} genomeSize=1000 minReadLength=50 minOverlapLength={4} corMinCoverage=3 stopOnLowCoverage=0'.format(self.canuRun,name_Dir,path_Dir,self.outdir_clust+fasta,self.min_overlap)
-                self.canu_log.info("Canu for {} has started".format(name_Dir))
+            self.canu_log.info("Canu for {} has started".format(name_Dir))
             run = os.system(run_Canu)
           
 
