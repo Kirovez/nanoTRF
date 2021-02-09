@@ -12,6 +12,7 @@ class FilteringLouvTab():
         self.reads=reads
         self.clustering_outTab=clustering_outTab
         self.filtering_outTab=outdir+'/louv_clust_filtering.tab'
+        self.clust_abund=outdir+'/clust_abund.tab'
         self.filt_log = getLog(log_file, "Filtering")
         self.filt_log.info("Filtering and preparing file with monomer sequences has started...")
         self.list_Rep=self.createListRep()
@@ -25,6 +26,7 @@ class FilteringLouvTab():
         dictRep={}
         cluster_abundancy = defaultdict(int)
         len_reads=0
+        abun_cl=[]
         for seq in SeqIO.parse(self.reads,'fasta'):
             len_reads+=len(seq.seq)
         with open(self.clustering_outTab) as LouvTab:
@@ -47,7 +49,16 @@ class FilteringLouvTab():
                         self.filt_log.info("Repeat number of the{0} less than 5, doesn't come into the further analysis".format(seq_id.rstrip()))
         self.filt_log.info('Length reads is {}'.format(len_reads))
         self.filt_log.info("Selection of high-copy clusters(with summary length of the tandem repeats in cluster > 100 thousand nucleotides)...") 
-        dictRep = {'*'.join(i.split('*')[0:2]):listFiltRep[i] for i in listFiltRep if cluster_abundancy[listFiltRep[i]] / float(len_reads) > float(self.minAbundancy)}
+        with open(self.clust_abund,'w') as clust_f:
+               
+            for i in listFiltRep:
+                if cluster_abundancy[listFiltRep[i]] / float(len_reads) > float(self.minAbundancy) and '*'.join(i.split('*')[0:2]) not in dictRep:
+                    dictRep['*'.join(i.split('*')[0:2])]=listFiltRep[i]
+                    name_cl='cluster_{0}'.format(listFiltRep[i])
+                    if  name_cl not in abun_cl:
+                        clust_f.write('cluster_{0}\t{1}\t{2}\n'.format(listFiltRep[i],cluster_abundancy[listFiltRep[i]]/ float(len_reads), cluster_abundancy[listFiltRep[i]]))
+                        abun_cl.append(name_cl)
+        #dictRep = {'*'.join(i.split('*')[0:2]):listFiltRep[i] for i in listFiltRep if cluster_abundancy[listFiltRep[i]] / float(len_reads) > float(self.minAbundancy)}
         return dictRep
    
     
@@ -70,25 +81,3 @@ class FilteringLouvTab():
                         fastaWr.write(reFSeqMnm) 
                         
         self.filt_log.info('Filtering and preparing file with monomer sequences has finished')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
