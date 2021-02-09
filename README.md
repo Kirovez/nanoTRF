@@ -39,7 +39,13 @@ pip install matplotlib biopython networkx
 or
 
 ```
-pip3 install matplotlib biopython networkx
+pip3 install matplotlib biopython networkx python-louvain
+```
+
+**Important note!** If you have `community` python module installed you need to delete it because it interferes with `python-louvain` module used by nanoTRF. Use this command to delete `community` module:
+```
+pip3 uninstall community
+
 ```
 
 ## <a name="introduction"></a>Introduction
@@ -48,32 +54,27 @@ NanoTRF is software tool to *de novo* search high-copy tandem repeats which is d
 
 It works with Oxford Nanopore Technologies (ONT) sequencing data
 
-### <a name="cmd"></a>Command and options
+## <a name="cmd"></a>Command and options
 
+### Required arguments***
+
+**-r,--reads** - path to FastQ or Fasta file
+
+**-out,--out_directory** - path to work directory for output files where will be saved
+
+**-pTH, --path_TH** - path to the location of TideHunter
+
+**-cu,--canu**  - path to the location of the Canu
+
+### Optional arguments
 **-h, --help**  - show this help message and exit
-
-**-r,--reads** - path to FastQ or Fasta file **(required argument!!!)**
-
-**-out,--out_directory** - path to work directory for output files where will be saved **(required argument!!!)**
-
-**-pTH, --path_TH** - path to the location of TideHunter **(required argument!!!)**
-
-**-cu,--canu**  - path to the location of the Canu **(required argument!!!)**
-
 **-bn,--blast**  - path to blastn executabled". ***Default='blastn'***
-
 **-mb,--makedb**  - path to makeblastdb executable. ***Default='makeblastdb'***
-
 **-w, --wordsize** - word size for wordfinder algorithm (length of best perfect match). ***Default = 22***
-
 ***-ev, --evalue*** -  expectation value (E) threshold for saving hits. ***Default = 2***
-
-**-m,--max_abundancy**  - the proportion of amount lengths all tandem repeats in one cluster to length all the reads. ***Default = 0.0001***
-                        
+**-m,--max_abundancy**  - the proportion of amount lengths all tandem repeats in one cluster to length all the reads. ***Default = 0.0001***                     
 **-cons, --consensus_name** - file name with consensus sequences. ***Default='consensus.fasta'***
-
 **-th, --threads**  - number of threads for running Blast. ***Default = 4***
-
 **-lg, ---log_file**  - this file list analysis parameters, modules and files,contains messages generated 
 on the various stages of the NanoTRF work. It allows tracking events that
 happens when NanoTRF runs. Default - loging.log ***Default = 'loging.log'***
@@ -93,7 +94,7 @@ NanoTRF generates consensus sequences in FASTA format.
 
 #### <a name="usage"></a>Usage
 
-The example of nanoTRF command to generate consensus sequences in FASTA format file using test ./test_seq/test_seq.fa, 30 threads and removing all temporary files after run:
+Test nanoTRF with the test files (nanoTRF/test_seq/test_seq.fa) using 30 threads:
 ```
 python3 ./nanoTRF.py -r ./test_seq/test_seq.fa -pTH ../TideHunter-v1.4.2/bin/TideHunter -cu ../canu/Linux-amd64/bin/canu -out ./test/
 ```
