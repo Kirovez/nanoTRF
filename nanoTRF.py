@@ -28,7 +28,7 @@ from bin import Reclustering
 import os
 
 class nanoTRF():
-    def __init__(self, reads, path_TH, canu,out_directory,blast, makedb,wordsize,wordsize_f,evalue,minAbundancy,consensus_name,threads,log_name,min_overlap,path_TR,opt_delete):
+    def __init__(self, reads, path_TH, canu,out_directory,blast, makedb,wordsize,wordsize_f,evalue,minAbundancy,consensus_name,threads,log_name,min_overlap,path_TR, opt_delete):
         self.outDirectory = checkDir_or_create(out_directory)
         self.reads = reads
         self.log_file = self.outDirectory + '/' + log_name
