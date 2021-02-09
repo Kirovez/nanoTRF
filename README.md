@@ -33,7 +33,7 @@ nanoTRF requires:
 - python packages to be installed: **biopython**, **networkx** To install these packages run the following command
 
 ```
-pip install matplotlib biopython networkx
+pip install matplotlib biopython networkx python-louvain
 ```
 
 or
