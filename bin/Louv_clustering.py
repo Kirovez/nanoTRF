@@ -1,6 +1,6 @@
 from bin.helpers.help_functions import getLog
 import networkx as nx
-from community import community_louvain
+import community as community_louvain
 
 class LouvClustering():
     def __init__(self, edge_list_file, outdir, log_file):
