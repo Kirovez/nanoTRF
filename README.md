@@ -20,18 +20,27 @@
 
 Download the [latest release](https://github.com/Kirovez/nanoTRF/releases):
 ```
-wget https:/https://github.com/Kirovez/nanoTRF/releases/download/v1.0.0/nanoTRF-v1.0.0.tar.gz
-tar -zxvf nanoTRF-v1.0.0.tar.gz && cd TideHunter-v1.0.0
-
+git clone https://github.com/Kirovez/nanoTRF.git
+cd nanoTRF
 ```
 **Prerequisites**
 nanoTRF requires:
 
-- blastn and makeblastdb programs. The paths to these programs can be set via **-bn** and **-mb** flags, respectively
-- TideHunter programm. It is recommended to download the [latest release of TideHunter](https://github.com/yangao07/TideHunter/releases).The paths to these programs can be set via **-pTH** flags
-- Canu programm. The latest release [can be download here](http://github.com/marbl/canu/releases). The paths to these programs can be set via **-cu** flags
-- python >= v3.6 python packages to be installed: biopython, networkx (run command: pip install matplotlib biopython networkx)
+- **blastn** and **makeblastdb** programs. The paths to these programs can be set via **-bn** and **-mb** flags, respectively
+- **TideHunter** programm. It is recommended to download the [latest release of TideHunter](https://github.com/yangao07/TideHunter/releases).The path to these program **must** be set via **-pTH** flag
+- **Canu** programm. The latest release [can be download here](http://github.com/marbl/canu/releases). The path to Canu **must** be set via **-cu** flag
+- **python >= v3.6**
+- python packages to be installed: **biopython**, **networkx** To install these packages run the following command
 
+```
+pip install matplotlib biopython networkx
+```
+
+or
+
+```
+pip3 install matplotlib biopython networkx
+```
 
 ## <a name="introduction"></a>Introduction
 
@@ -84,19 +93,18 @@ NanoTRF generates consensus sequences in FASTA format.
 
 #### <a name="usage"></a>Usage
 
-To generate consensus sequences in FASTA format file (with usage default optional arguments):
+The example of nanoTRF command to generate consensus sequences in FASTA format file using 30 threads and removing all temporary files after run:
 ```
-python3 ./nanoTRF.py -r test.fasta -pTH ./bin/TideHunter -cu ./bin/canu ./test/
+python3 ./nanoTRF.py -r ./test_seq/test_seq.fa -pTH ../TideHunter-v1.4.2/bin/TideHunter -cu ../canu/Linux-amd64/bin/canu -out ./test/
 ```
 To generate consensus sequences in FASTA format file, change number of theads that will be used and remove all unnecessary files and directories:
 ```
-python3 ./nanoTRF.py -r test.fasta -pTH ./bin/TideHunter -cu ./bin/canu ./test/ -th 30 -del c
+python3 ./nanoTRF.py -r ./test_seq/test_seq.fa -pTH ../TideHunter-v1.4.2/bin/TideHunter -cu ../canu/Linux-amd64/bin/canu -out ./test/ -th 30 -del c
 ```
 ## <a name="authors"></a>Authors
-**Ilya Kirov**
 
 **Elizaveta Kolganova**
-
+**Ilya Kirov**
 ## Acknowledgement
 The project was financially supported by Russian Foundation for Basic Research (RFBR project № 17-00-00336)
 
