@@ -93,7 +93,7 @@ NanoTRF generates consensus sequences in FASTA format.
 
 #### <a name="usage"></a>Usage
 
-The example of nanoTRF command to generate consensus sequences in FASTA format file using 30 threads and removing all temporary files after run:
+The example of nanoTRF command to generate consensus sequences in FASTA format file using test ./test_seq/test_seq.fa, 30 threads and removing all temporary files after run:
 ```
 python3 ./nanoTRF.py -r ./test_seq/test_seq.fa -pTH ../TideHunter-v1.4.2/bin/TideHunter -cu ../canu/Linux-amd64/bin/canu -out ./test/
 ```
