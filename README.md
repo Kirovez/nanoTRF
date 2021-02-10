@@ -96,11 +96,11 @@ NanoTRF generates consensus sequences in FASTA format.
 
 Test nanoTRF with the test files (nanoTRF/test_seq/test_seq.fa) using 30 threads:
 ```
-python3 ./nanoTRF.py -r ./test_seq/test_seq.fa -pTH ../TideHunter-v1.4.2/bin/TideHunter -cu ../canu/Linux-amd64/bin/canu -out ./test/
+python3 ./nanoTRF.py -r ./test_seq/test_4th_Linum.fasta -pTH ../TideHunter-v1.4.2/bin/TideHunter -cu ../canu/Linux-amd64/bin/canu -out ./test/
 ```
 To generate consensus sequences in FASTA format file, change number of theads that will be used and remove all unnecessary files and directories:
 ```
-python3 ./nanoTRF.py -r ./test_seq/test_seq.fa -pTH ../TideHunter-v1.4.2/bin/TideHunter -cu ../canu/Linux-amd64/bin/canu -out ./test/ -th 30 -del c
+python3 ./nanoTRF.py -r ./test_seq/test_4th_Linum.fasta -pTH ../TideHunter-v1.4.2/bin/TideHunter -cu ../canu/Linux-amd64/bin/canu -out ./test/ -th 30 -del c
 ```
 ## <a name="authors"></a>Authors
 
