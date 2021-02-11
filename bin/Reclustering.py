@@ -63,6 +63,7 @@ class Reclustering():
         self.out_blast=self.outdir_reblast+'blast_sec.tab'
         self.out_clust = self.outdir_reblast + '/seq_clust.clst'
         self.nanoTRF=self.outdir+'/TR_nanotrf.fasta'
+        self.end_nano=self.outdir+'/nanoTRF.fasta'
         self.Reclust_log=getLog(log_file,'Reclustering')
         self.abund_f=abund_f
         self.nanoTRF_abund = self.outdir+'/abund_nanotrf.tab'
@@ -70,6 +71,7 @@ class Reclustering():
         self.list_BLAST =self.Blast_parsing()
         self.fasta_clust=self.createGraph(self.list_BLAST)
         self.filt_clust(self.fasta_clust)
+        self.nano_end()
 
     def BLAST(self):
         #all-versus-all comparisons of TRs
@@ -183,3 +185,25 @@ class Reclustering():
                 else:
                     count_ab+=float(abund_dict2[seq])
                 nano_abund.write('{0}\t{1:.5f} \n'.format(seq,count_ab*100))
+    def nano_end(self):
+        with open(self.nanoTRF_abund) as nano_abund,open(self.nanoTRF) as tr_nano,open(self.end_nano,'w') as nano:
+            dict_f={}
+            for seq in nano_abund:
+                sp=seq.split('\t')
+                n_clust=sp[0].split('_')[-1].rstrip()
+                print(n_clust)
+                if n_clust not in dict_f:
+                    dict_f[n_clust]=sp[-1].rstrip()
+            for seq in SeqIO.parse(tr_nano,'fasta'):
+                n_cl=seq.id.split('/')[0].split('clust')[-1]           
+               
+                sp=seq.id.split('_')                
+                if len(sp)==3:
+                    len_s='monomer_length:{} bp'.format(sp[-2])
+                    abund_cl='cluster_abund:{}%'.format(dict_f[n_cl])
+                    nano.write('>clust{0} {1} {2}\n{3}\n'.format(n_cl,len_s,abund_cl,seq.seq))
+                    
+                if len(sp)==4:
+                    len_s='monomer_length:{}bp'.format(sp[-1])
+                    abund_cl='cluster_abund:{}%'.format(dict_f[n_cl])
+                    nano.write('>clust{0} {1} {2}\n{3}\n'.format(n_cl,len_s,abund_cl,seq.seq))
