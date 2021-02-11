@@ -29,11 +29,13 @@ class Delete_direct():
             shutil.rmtree(self.outdir_canu)
             shutil.rmtree(self.outdir_clust)    
             shutil.rmtree(self.outdir_reblast)
-            #Delete an TRF html. reports and unnecessary BLAST files
+            #Delete an TRF html. reports and unnecessary BLAST files          
             for file_t in os.listdir(self.out_dir):
-                if file_t.endswith('.html') or file_t.endswith('.nhr') or file_t.endswith('.nin') or file_t.endswith('.nsq'):
+                if file_t!='nanoTRF.fasta':
+                #file_t.endswith('.html') or file_t.endswith('.nhr') or file_t.endswith('.nin') or file_t.endswith('.nsq'):
                     path_t=self.out_dir+file_t
                     os.remove(path_t)
+                
                 
             
             
