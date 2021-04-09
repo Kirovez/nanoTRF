@@ -56,7 +56,7 @@ from Bio import SeqIO
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 class Reclustering():
-    def __init__(self, blast_run, makedb,threads, word_size, trf_file,outdir,abund_f,log_file):
+    def __init__(self, blast_run, makedb,threads, word_size, trf_file,outdir,abund_f,perc_abund,log_file):
         self.blast_run,self.makedb,self.outdir,self.threads, self.word_size = blast_run,makedb,outdir, threads, word_size
         self.trf_file=trf_file
         self.outdir_reblast=self.outdir +'/ReBlast/'
@@ -66,6 +66,7 @@ class Reclustering():
         self.end_nano=self.outdir+'/nanoTRF.fasta'
         self.Reclust_log=getLog(log_file,'Reclustering')
         self.abund_f=abund_f
+        self.perc_abund=perc_abund
         self.nanoTRF_abund = self.outdir+'/abund_nanotrf.tab'
         self.BLAST()
         self.list_BLAST =self.Blast_parsing()
@@ -83,7 +84,8 @@ class Reclustering():
         #filtering  and removing similar strings and sequences with identity <80 and coverage <80
     def Blast_parsing(self):
         #parsing BLAST table
-        l_BLAST = []
+        l_BLAST = {}
+        l_2=[]
         self.Reclust_log.info('Table filtration after Blastn is running'+'\n')
         with open(self.out_blast) as pars_tab:
             count=0
@@ -92,15 +94,16 @@ class Reclustering():
                 id_s=stB.split('\t')[1]
                 v_ident=stB.split('\t')[2]
                 q_cov=stB.split('\t')[3]
-                if id_q!=id_s and float(v_ident)>=80 and float(q_cov)>=80:
+                if id_q!=id_s and float(v_ident)>=70 and float(q_cov)>=80:
                     id_q_s='{0},{1}'.format(id_q,id_s)
                     id_s_q = '{1},{0}'.format(id_q, id_s)
-                    if (id_q_s and id_s_q) not in l_BLAST:
+                    if (id_q_s not in l_BLAST) and (id_s_q not in l_BLAST):
+                        l_BLAST[id_q_s]=0
                         count+=1
-                        l_BLAST.append(id_q_s)
+                        l_2.append(id_q_s)
             self.Reclust_log.info('{0} pairs have been added for clustering analysis\n'.format(count))
             self.Reclust_log.info('Table filtration after Blastn is done')
-        return l_BLAST
+        return l_2
 
     def createGraph(self,list_BLAST):
         #graph creating
@@ -197,13 +200,14 @@ class Reclustering():
             for seq in SeqIO.parse(tr_nano,'fasta'):
                 n_cl=seq.id.split('/')[0].split('clust')[-1]           
                
-                sp=seq.id.split('_')                
-                if len(sp)==3:
-                    len_s='monomer_length:{} bp'.format(sp[-2])
-                    abund_cl='cluster_abund:{}%'.format(dict_f[n_cl])
-                    nano.write('>clust{0} {1} {2}\n{3}\n'.format(n_cl,len_s,abund_cl,seq.seq))
-                    
-                if len(sp)==4:
-                    len_s='monomer_length:{}bp'.format(sp[-1])
-                    abund_cl='cluster_abund:{}%'.format(dict_f[n_cl])
-                    nano.write('>clust{0} {1} {2}\n{3}\n'.format(n_cl,len_s,abund_cl,seq.seq))
+                sp=seq.id.split('_') 
+                if float(dict_f[n_cl])>=float(perc_abund):
+                    if len(sp)==3:
+                        len_s='monomer_length:{}bp'.format(sp[-2].split('/')[-1])
+                        abund_cl='cluster_abundance:{}%'.format(dict_f[n_cl])
+                        nano.write('>clust{0} {1} {2}\n{3}\n'.format(n_cl,len_s,abund_cl,seq.seq))
+                            
+                    if len(sp)==4:
+                        len_s='monomer_length:{}bp'.format(sp[-1])
+                        abund_cl='cluster_abund:{}%'.format(dict_f[n_cl])
+                        nano.write('>clust{0} {1} {2}\n{3}\n'.format(n_cl,len_s,abund_cl,seq.seq))
