@@ -7,14 +7,16 @@ from bin.helpers.help_functions import getLog
 
 
 class ConsAssembly():
-    def __init__(self,canu,filtering_outTab,outdir,log_file,min_overlap,consensus_name):
+    def __init__(self,canu,filtering_outTab,singleton_list,outFasta,outdir,log_file,min_overlap,consensus_name):
         self.filtering_outTab=filtering_outTab
         self.min_overlap=min_overlap
         self.consensus_name=consensus_name
         self.outdir=outdir
+        self.outFasta=outFasta
         self.outdir_clust=outdir+'/clusters/'
         self.outdir_canu=outdir+'/canu/'
         self.canuRun=canu
+        self.singleton_list=singleton_list
         self.canu_log = getLog(log_file, "Consensus assembly")
         self.canu_log.info("CONSENSUS ASSEMBLY has started...")
         self.createfile()
@@ -56,7 +58,7 @@ class ConsAssembly():
             name_Dir=fasta.split('.fasta')[0]
             path_Dir=self.outdir_canu+name_Dir
             os.mkdir(path_Dir)
-            run_Canu = '{0} -p {1} -d {2} useGrid=0 -nanopore-raw {3} genomeSize=1000 minReadLength=50 minOverlapLength={4} corMinCoverage=3 stopOnLowCoverage=0'.format(self.canuRun,name_Dir,path_Dir,self.outdir_clust+fasta,self.min_overlap)
+            run_Canu = '{0} -p {1} -d {2} useGrid=0 -nanopore-raw {3} genomeSize=1000 minReadLength=25 minOverlapLength={4} corMinCoverage=3 stopOnLowCoverage=0'.format(self.canuRun,name_Dir,path_Dir,self.outdir_clust+fasta,self.min_overlap)
             self.canu_log.info("Canu for {} has started".format(name_Dir))
             run = os.system(run_Canu)
           
@@ -87,6 +89,20 @@ class ConsAssembly():
                             self.canu_log.info("Consensus for {0} was added in consensus file".format(fasta))
                     else:
                         self.canu_log.info("!!!!Consensus sequences for {0} wasn't assembly!!!!".format(dirClust))
+        dir_nBlast={}
+        with open(self.singleton_list) as not_blast:
+            for seq in not_blast:
+                sp=seq.split('\t')
+                if sp[0] not in dir_nBlast and float(sp[0].split('*')[-1])>100:
+                    dir_nBlast[sp[0]]=sp[-1]
+        with open(self.consensus_name,'a') as ConsensusFile:
+            for seq in SeqIO.parse(self.outFasta,'fasta'):
+                if seq.id in dir_nBlast:
+                    ConsensusFile.write('>cons_clust{0}/{1}_n\n{2}\n'.format(dir_nBlast[seq.id].rstrip(),seq.id.split('*')[-2],seq.seq))
+                
+           
+                
+            
         self.canu_log.info("FINISHED.{} consensus sequences was generated".format(countDir))
 
 
