@@ -22,20 +22,20 @@ class Delete_direct():
         self.del_dir()
         self.del_log.info("Exit.......\n Finished the work")
 
-    def del_dir(self):
+    def del_dir(self):        
+        os.system('rm {0}/*html'.format(self.out_dir))            
         if self.opt_delete == 'd':
             self.del_log.info("Removing directories has started...")
             #Delete an entire directory tree - ./clust/, ./canu/ and ./ReBlast/
             shutil.rmtree(self.outdir_canu)
             shutil.rmtree(self.outdir_clust)    
             shutil.rmtree(self.outdir_reblast)
-            #Delete an TRF html. reports and unnecessary BLAST files          
+            #Delete an TRF html. reports and unnecessary BLAST files
             for file_t in os.listdir(self.out_dir):
                 if file_t!='nanoTRF.fasta':
                 #file_t.endswith('.html') or file_t.endswith('.nhr') or file_t.endswith('.nin') or file_t.endswith('.nsq'):
                     path_t=self.out_dir+file_t
                     os.remove(path_t)
-                
                 
             
             
@@ -44,8 +44,3 @@ class Delete_direct():
             pass
         else:
             self.del_log.info("!!!ERROR!!!Parameter does not exist!!!")
-
-
-
-
-            
