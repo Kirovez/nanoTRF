@@ -36,13 +36,7 @@ class run_BLAST():
                 if seq.description not in dict_blast:
                     singleton_r+=1
                     count_r+=1
-                    outNotBlast.write('{0}\tartef{1}'.format(seq.description,count_r)+'\n')
-                    
-                    
-                
-            
-                
-                    
+                    outNotBlast.write('{0}\tartef{1}'.format(seq.description,count_r)+'\n')  
         print('Number of singletons:{}'.format(singleton_r))
         print("Number of edges", edge_cnt)
         self.bl_log.info("NUmber of edges: {}".format(edge_cnt))
