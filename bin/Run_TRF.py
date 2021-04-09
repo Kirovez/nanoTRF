@@ -12,7 +12,7 @@ Input arguments:TRF,consensus_name,outdir,log_file
 
 2. def TRF - running TRF and selecting the sequences from txt.html report
  Running TRF:
-'trf consensus.fasta 2 7 7 80 10 50 2000'
+'trf consensus.fasta 2 7 7 80 10 50 1000'
 
 Selection of all consensus sequences from the TRF reports which are written into the 'TRF_seq.fasta'
 
@@ -51,7 +51,7 @@ class Run_TRF():
         #running TRF and selecting the sequences from txt.html report
         self.TRF_log.info("Creating files with consensus sequences for each monomer has started..")
         #running TRF
-        run_trf='{0} {1} 2 7 7 80 10 50 2000'.format(self.run_TRF,self.consensus_name)
+        run_trf='{0} {1} 2 7 7 80 10 50 1000'.format(self.run_TRF,self.consensus_name)
         self.TRF_log.info('TRF has started')
         os.system(run_trf)
         self.TRF_log.info('TRF has finished')
@@ -95,7 +95,8 @@ class Run_TRF():
                         if len(el_seq)<count:
                             count=len(el_seq)
                             seq_n=el_seq
-                wfile.write('>{0}_{2}\n{1}\n'.format(str(seq_id), str(seq_n), count))
+                if count>15:
+                    wfile.write('>{0}_{2}\n{1}\n'.format(str(seq_id), str(seq_n), count))
                 list_cons.append(str(seq_id))
         self.TRF_log.info('Generation file with TRF consensus pattern has finished')
         self.TRF_log.info('Addition sequences not included in the TRF analysis to the output file')
