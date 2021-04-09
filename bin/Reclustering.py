@@ -201,7 +201,7 @@ class Reclustering():
                 n_cl=seq.id.split('/')[0].split('clust')[-1]           
                
                 sp=seq.id.split('_') 
-                if float(dict_f[n_cl])>=float(perc_abund):
+                if float(dict_f[n_cl])>=float(self.perc_abund):
                     if len(sp)==3:
                         len_s='monomer_length:{}bp'.format(sp[-2].split('/')[-1])
                         abund_cl='cluster_abundance:{}%'.format(dict_f[n_cl])
