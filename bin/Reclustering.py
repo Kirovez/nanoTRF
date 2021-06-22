@@ -224,6 +224,6 @@ class Reclustering():
         with open(self.tab_all,'w') as tab_TR, open(self.end_nano) as nano:
             tab_TR.write('ID\tmonomer length\tabundance\n')
             for seq in SeqIO.parse(nano,'fasta'):
-                tab_s='{0}\t{1}\t{2}\n'.format(seq.description.split(' ')[0], len(seq.seq), seq.description.split('abund:')[-1])
+                tab_s='{0}\t{1}\t{2}\n'.format(seq.description.split(' ')[0], len(seq.seq), seq.description.split('cluster_abundance:')[-1].split('%')[0])
                 tab_TR.write(tab_s)
 
