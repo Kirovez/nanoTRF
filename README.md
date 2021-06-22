@@ -104,24 +104,24 @@ Options:
   Clustering parameters:
     -m --min_copy       INT      The minimum number of TRs copy in the data (Default=100)
     -mOVe --min_Overlap STR      the number of overlapping nucleotides between repeats in one cluster (De10]
-    -ca --perc_abund    STR      minimum value of the TR cluster abundancy. ***Default = 0.009***
+    -ca --perc_abund    STR      minimum value of the TR cluster abundancy. (Default = 0.009)
 
   Path to programm for running nanoTRF:
-    -pTH --path_TH      STR      path to the location of TideHunter [TideHinter]
+    -pTH --path_TH      STR      path to the location of TideHunter (Default=TideHinter)
     -cu --canu          STR      path to the location of Canu (required argument!!!It's missing in the conda)
-    -trf --TRF_run      STR      path to the location [trf]
-    -b --blast          STR      path to blastn executabled [blastn]
-    -mb --makedb        STR      path to makeblastdb executable [makeblastdb]
+    -trf --TRF_run      STR      path to the location (Default=trf)
+    -b --blast          STR      path to blastn executabled (Default=blastn)
+    -mb --makedb        STR      path to makeblastdb executable (Default=makeblastdb)
 
   Output:
     -o --out_directory  STR      path to work directory for output files where will be saved **(required argument!!!)
     -lg --log_filepath  STR      path to file which list analysis parameters, modules, and files, contains messages generated 
-                                 in the various stages of the work [loging.log]
-    -nano --nano_trf    STR      fasta file with the TRs consensus sequences [nanoTRF.fasta]
-    -tab --nano_tab     STR      table file with the TRs abundancy [TR_info.tab]
+                                 in the various stages of the work (Default=loging.log)
+    -nano --nano_trf    STR      fasta file with the TRs consensus sequences (Default=nanoTRF.fasta)
+    -tab --nano_tab     STR      table file with the TRs abundancy (Default=TR_info.tab)
 
   Сomputational resources:
-    -th, --threads      STR      number of threads for running blast, canu. [4]
+    -th, --threads      STR      number of threads for running blast, canu. (Default=4)
 
   Additional option:
     -d --dir_cleanup    STR      remove unncessary large files and directories from working directory [False]
