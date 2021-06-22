@@ -8,8 +8,8 @@ Filtering TR with number of repeats >5 and in second TH file TR monomers for eac
 """
 ############singletonR
 class FilteringLouvTab():
-    def __init__(self,clustering_outTab,singleton_list,outdir,reads,THall,minAbundancy,log_file):
-        self.minAbundancy = minAbundancy
+    def __init__(self,clustering_outTab,singleton_list,outdir,reads,THall,mincopy,log_file):
+        self.mincopy = mincopy
         self.reads=reads
         self.singletonR=singleton_list
         self.clustering_outTab=clustering_outTab
@@ -55,7 +55,7 @@ class FilteringLouvTab():
                 abund_seq = countRep * countLen
                 cluster_abundancy[sp[-1]] += abund_seq      
             for clust in copyNum:
-                if copyNum[clust]>=100:
+                if copyNum[clust]>=int(mincopy):
                     list_clust.append(clust)
             print(list_clust)
             
@@ -79,7 +79,7 @@ class FilteringLouvTab():
                     if  name_cl not in abun_cl:
                         clust_f.write('cluster_{0}\t{1}\t{2}\n'.format(listFiltRep[i],cluster_abundancy[listFiltRep[i]]/ float(len_reads), cluster_abundancy[listFiltRep[i]]))
                         abun_cl.append(name_cl)
-      #dictRep = {'*'.join(i.split('*')[0:2]):listFiltRep[i] for i in listFiltRep if cluster_abundancy[listFiltRep[i]] / float(len_reads) > float(self.minAbundancy)}
+    
         return dictRep
    
     
@@ -103,3 +103,25 @@ class FilteringLouvTab():
                             fastaWr.write(reFSeqMnm) 
                         
         self.filt_log.info('Filtering and preparing file with monomer sequences has finished')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
