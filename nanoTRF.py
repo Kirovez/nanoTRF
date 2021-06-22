@@ -143,14 +143,15 @@ def main():
     os.system('rm {0}consensus.fasta*html'.format(out_trf))
     del_log = getLog(log_file, "DELETE")
     for file_t in os.listdir(outDirectory):
-        if (file_t != 'nanoTRF.fasta' or file_t != 'TH.out.fasta' or file_t != 'TH.out.fasta.tab' or file_t != 'TR_info.tab' or file_t != 'loging.log') and os.path.isfile(outDirectory+file_t):
-            path_t = outDirectory + file_t
-            os.remove(path_t)
+        if os.path.isfile(outDirectory+file_t):
+            if file_t != outDirectory+'nanoTRF.fasta' or file_t != outDirectory+'TH.out.fasta' or file_t !=outDirectory+'TH.out.fasta.tab' or file_t != outDirectory+'TR_info.tab' or file_t !=outDirectory+ 'loging.log':
+                path_t = outDirectory + file_t
+                os.remove(path_t)
     for file in os.listdir(args.out_directory):
         if file.startswith('consensus.fasta') and file.endswith('html') and not os.path.isdir(args.out_directory+'/'+file):
             path_t = args.out_directory + file
             os.remove(path_t)
-    if not args.dir_cleanup:
+    if  not args.cleanup:
         del_log.info("Removing directories has started...")
         # Delete an entire directory tree - ./clust/, ./canu/ and ./ReBlast/
         shutil.rmtree(dir_canu)
@@ -200,7 +201,7 @@ def get_cmdline_args():
                         help="Number of overlapping nucleotides  between repeats in one cluster", default=10)
     parser.add_argument("-ca", "--perc_abund", help="Minimum value of the TR cluster abundancy", default=0.009)
 
-    parser.add_argument("-d", "--dir_cleanup", default=False, action="store_true",
+    parser.add_argument("-c", "--cleanup", default=True, action="store_true",
                         help="Remove unncessary large files and directories from working directory")
     args = parser.parse_args()
     if args.run_th:
