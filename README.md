@@ -71,6 +71,8 @@ If you meet any issue with creating environment, please try the pre-built binary
 wget https:/https://github.com/Kirovez/nanoTRF/releases/download/v1.0.0/nanoTRF-v1.0.0.tar.gz
 tar -zxvf nanoTRF-v1.0.0.tar.gz && cd TideHunter-v1.0.0
 ```
+**We recommended create a folder and running the pipeline in the previosly established directory**
+
 Before you start, you need to make sure that all program and packages specified below is already installed on your computer. For running nanoTRF  you will need to specify the programs path through special flags:
 
 - blastn and makeblastdb programs. The paths to these programs can be set via **-b** and **-mb** flags, respectively
