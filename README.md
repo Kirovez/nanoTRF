@@ -8,7 +8,7 @@
 
 Download the [latest release](https://github.com/Kirovez/nanoTRF/releases):
 ```
-wget https:/https://github.com/Kirovez/nanoTRF/releases/download/v1.0.0/nanoTRF-v1.0.0.tar.gz
+wget https:/https://github.com/Kirovez/nanoTRF/releases/download/v1.0.0/nanoTRF-v1.0.1.tar.gz
 tar -zxvf nanoTRF-v1.0.0.tar.gz && cd TideHunter-v1.0.0
 ```
 Install via conda (recommended):
