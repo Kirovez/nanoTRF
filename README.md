@@ -96,9 +96,8 @@ Options:
     -T --run_th         STR      path to output files of the TideHunter (if previously TideHunter was running by user): 
                                  table file with consensus sequences and fasta file with unique tandem repeats
   Scoring parameters for partial order alignment:
-    -w --wordsize       INT      word size for wordfinder algorithm (length of best perfect match) (Default = 22)
-    -w_f --wordsize_f   INT      word size for wordfinder algorithm (length of best perfect match) in 
-                                 the Reclusting module (Default=15)
+    -w --word_f       INT      word size for first BLAST searching. We recommend you not to change the default integer! (Default = 22)
+    -ws --wordsize_s   INT      word size for second BLAST searching. We recommend you not to change the default integer! (Default=15)
     -ev --evalue        INT      expectation value (E) threshold for saving hits (Default=2)
 
   Clustering parameters:
