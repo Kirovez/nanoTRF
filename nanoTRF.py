@@ -12,7 +12,6 @@ NanoTRF-based TRs search and reconstruction of the consensus sequences has 9 mai
     7) searching for the location and display TRs in sequences  - module Run_TRF,
     8) re-clustering obtained TRs pattern - module Reclustering,
     9) removing unnecessary large files and directories from working directory - module Delete_dir
-
 """
 from bin import read_preparation
 from bin import run_TideHunter
@@ -33,6 +32,7 @@ import shutil
 def main():
     args = get_cmdline_args()
     w_TH=args.run_th
+    out_trf=args.out_directory
     outDirectory = '{0}/'.format(checkDir_or_create(args.out_directory))
     reads = args.reads
     log_file =outDirectory + args.log_file
@@ -64,12 +64,12 @@ def main():
     ##########################################
     ###############CLUSTERING################
     clustering_outTab = ''
-    minAbundancy = args.max_abundancy
+    minCopy= args.min_copy
     ###############CANU#####################
     canu = args.canu
     min_overlap = args.min_Overlap
-    consensus_name = outDirectory + args.consensus_name
-
+    consensus_name = outDirectory + args.nano_trf
+    tab_name=outDirectory+args.nano_tab
 
     ###TRF###
 
@@ -115,32 +115,41 @@ def main():
     clustering_outTab = louv_module_data.clustering_outTab
 
     Filt_data = FilterRep.FilteringLouvTab(clustering_outTab, singleton_list, outDirectory, reads,
-                                           TH_all_monomers, minAbundancy,log_file)
+                                           TH_all_monomers, minCopy,log_file)
     tableFilt = Filt_data.filtering_outTab
     abund_tab = Filt_data.clust_abund
 
     ###Canu###
-    consensus_out = Consensus_Assembly.ConsAssembly(canu, tableFilt, singleton_list,
+    consensus_out = Consensus_Assembly.ConsAssembly(canu,tableFilt, singleton_list,
                                                     TH_outFasta, outDirectory, log_file,
-                                                    min_overlap, consensus_name)
+                                                    min_overlap,threads)
     dir_clust = consensus_out.outdir_clust
     dir_canu = consensus_out.outdir_canu
+    consensus_file=consensus_out.consensus_fasta
 
     ###TRF###
 
-    TRF_out = Run_TRF.Run_TRF(path_TR, consensus_name, outDirectory, log_file)
+    TRF_out = Run_TRF.Run_TRF(path_TR, outDirectory, log_file)
     re_blast = TRF_out.dir_trf
     trf_seq = TRF_out.filt_trf
 
     ###Reclustering###
 
-    reclust_out = Reclustering.Reclustering(blast_run, makedb, threads, wordsize_f,trf_seq,
+    reclust_out = Reclustering.Reclustering(consensus_name,tab_name,blast_run, makedb, threads, wordsize_f,trf_seq,
                                             outDirectory, abund_tab, perc_abund, log_file)
     nanoTRF_abund = reclust_out.nanoTRF_abund
 
     ###Delete directories###
-    os.system('rm {0}*html'.format(outDirectory))
+    os.system('rm {0}consensus.fasta*html'.format(out_trf))
     del_log = getLog(log_file, "DELETE")
+    for file_t in os.listdir(outDirectory):
+        if (file_t != 'nanoTRF.fasta' or file_t != 'TH.out.fasta' or file_t != 'TH.out.fasta.tab' or file_t != 'TR_info.tab' or file_t != 'loging.log') and os.path.isfile(outDirectory+file_t):
+            path_t = outDirectory + file_t
+            os.remove(path_t)
+    for file in os.listdir(args.out_directory):
+        if file.startswith('consensus.fasta') and file.endswith('html') and not os.path.isdir(args.out_directory+'/'+file):
+            path_t = args.out_directory + file
+            os.remove(path_t)
     if not args.dir_cleanup:
         del_log.info("Removing directories has started...")
         # Delete an entire directory tree - ./clust/, ./canu/ and ./ReBlast/
@@ -148,10 +157,8 @@ def main():
         shutil.rmtree(dir_clust)
         shutil.rmtree(re_blast)
         # Delete an TRF html. reports and unnecessary BLAST files
-        for file_t in os.listdir(outDirectory):
-            if file_t != 'nanoTRF.fasta' or file_t != 'TH.out.fasta' or file_t != 'TH.out.fasta.tab' or file_t != 'TR_info.tab' and file_t != 'loging.log':
-                path_t = outDirectory + file_t
-                os.remove(path_t)
+    
+   
     else:
         del_log.info("Directories are not removed")
 
@@ -162,7 +169,7 @@ def get_cmdline_args():
     parser.add_argument("-r", "--reads", help="Path to FastQ or Fasta file")
     parser.add_argument("-pTH", "--path_TH", help="Path to the location of the TideHunter", default='TideHunter')
     parser.add_argument("-T","--run_th", help="  If previously TH was running", nargs=2)
-    parser.add_argument("-cu", "--canu", help="Path to the location of the Canu")
+    parser.add_argument("-cu", "--canu", help="Path to the location of the Canu", default='canu')
     parser.add_argument("-trf", "--TRF_run", help="Path to the location of the Tandem Rapeat Finder",default='trf' )
     parser.add_argument("-o", "--out_directory", help="Path to work directory for output files where will be saved")
     parser.add_argument("-b", "--blast", help="Path to blastn executabled", default='blastn')
@@ -172,12 +179,18 @@ def get_cmdline_args():
     parser.add_argument("-w_f", "--wordsize_f", help='Word size for Reblusting(length of best perfect match)',
                         default=15)
     parser.add_argument("-ev", "--evalue", help=' Expectation value (E) threshold for saving hits', default=2)
-    parser.add_argument("-m", "--max_abundancy",
-                        help="The proportion of amount lengths all tandem repeats in one cluster to length all the reads",
-                        default=0.0001)
-    parser.add_argument("-cons", "--consensus_name",
-                        help="File name with consensus sequences, default name - consensus.fasta",
-                        default='consensus.fasta')
+    parser.add_argument("-m", "--min_copy",
+                        help="The minimum number of TRs copy in the data",
+                        default=100)
+    parser.add_argument("-nano", "--nano_trf",
+                        help="File name with consensus sequences, default name - nanoTRF.fasta",
+                        default='nanoTRF.fasta')
+                        
+    parser.add_argument("-tab", "--nano_tab",
+                        help="Table file with the TRs abundancy ",
+                        default='TR_info.tab')                   
+                        
+                        
     parser.add_argument("-th", "--threads", help="Number of threads for running the module Blast", default=4)
     parser.add_argument("-lg", "---log_file",
                         help="This file list analysis parameters, modules and files, contains messages generated on the various stages of the NanoTRF work. "
