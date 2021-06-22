@@ -124,7 +124,7 @@ Options:
     -ev --evalue        INT      expectation value (E) threshold for saving hits [2]
 
   Clustering parameters:
-    -m --max_abundancy  STR      the proportion of amount lengths all tandem repeats in one cluster to length all the reads [0.0001]
+    -m --min_copy       INT      The minimum number of TRs copy in the data [100]
     -mOVe --min_Overlap STR      the number of overlapping nucleotides between repeats in one cluster [10]
     -ca --perc_abund    STR      minimum value of the TR cluster abundancy. ***Default = 0.009***
 
