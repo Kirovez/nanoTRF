@@ -27,11 +27,12 @@ from Bio import SeqIO
 from bin.helpers.help_functions import getLog
 
 class Run_TRF():
-    def __init__(self,TRF,consensus_name,outdir, log_name):
+    def __init__(self,TRF,outdir, log_name):
         self.outdir=outdir
-        self.dir_trf=outdir+'/ReBlast/'
-        self.run_TRF=TRF        
-        self.consensus_name=consensus_name
+        self.nano=outdir
+        self.dir_trf=self.nano+'/ReBlast/'
+        self.run_TRF=TRF       
+      
         self.file_num = self.dir_trf+'/TRF_seq_dr.fasta'
         self.filt_trf = self.dir_trf+ '/seqFilt_trf.fasta'
         self.TRF_log=getLog(log_name,'TRF')
@@ -51,15 +52,15 @@ class Run_TRF():
         #running TRF and selecting the sequences from txt.html report
         self.TRF_log.info("Creating files with consensus sequences for each monomer has started..")
         #running TRF
-        run_trf='{0} {1} 2 7 7 80 10 50 2000'.format(self.run_TRF,self.consensus_name)
+        run_trf='{0} {1} 2 7 7 80 10 50 2000'.format(self.run_TRF,self.outdir+'/consensus.fasta')
         self.TRF_log.info('TRF has started')
         os.system(run_trf)
         self.TRF_log.info('TRF has finished')
         self.TRF_log.info('Generation file with TRF consensus pattern has started ...')
         #selection from working direcory all txt.html files - reports for each TRs after running TRF
         with open(self.file_num,'w') as wfile:
-            for trf_f in os.listdir(self.outdir):
-                if trf_f.endswith('txt.html'):
+            for trf_f in os.listdir(self.nano):
+                if trf_f.endswith('txt.html') and trf_f.startswith('consensus.fasta'):
                     with open(trf_f) as file:
                         seq_id=0
                         for line in file:
@@ -100,7 +101,7 @@ class Run_TRF():
                 list_cons.append(str(seq_id))
         self.TRF_log.info('Generation file with TRF consensus pattern has finished')
         self.TRF_log.info('Addition sequences not included in the TRF analysis to the output file')
-        for seq in SeqIO.parse(self.consensus_name,'fasta'):
+        for seq in SeqIO.parse(self.outdir+'/consensus.fasta','fasta'):
             if seq.id not in list_cons:
                 with open(self.filt_trf, 'a') as file_all:
                     file_all.write('>{0}\n{1}\n'.format(seq.id,seq.seq))
