@@ -124,7 +124,7 @@ Options:
     -th, --threads      STR      number of threads for running blast, canu. (Default=4)
 
   Additional option:
-    -d --dir_cleanup    STR      remove unncessary large files and directories from working directory [False]
+    -c --cleanup    STR      remove unncessary large files and directories from working directory [False]
     
     
 -h, --help  - show this help message and exit
