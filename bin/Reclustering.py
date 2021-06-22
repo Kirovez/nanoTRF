@@ -54,62 +54,70 @@ import networkx as nx
 from bin.helpers.help_functions import getLog
 from Bio import SeqIO
 import warnings
+
 warnings.filterwarnings("ignore", category=UserWarning)
+
+
 class Reclustering():
-    def __init__(self, blast_run, makedb,threads, word_size, trf_file,outdir,abund_f,perc_abund,log_file):
-        self.blast_run,self.makedb,self.outdir,self.threads, self.word_size = blast_run,makedb,outdir, threads, word_size
-        self.trf_file=trf_file
-        self.outdir_reblast=self.outdir +'/ReBlast/'
-        self.out_blast=self.outdir_reblast+'blast_sec.tab'
+    def __init__(self,consensus_name,tab_name, blast_run, makedb, threads, word_size, trf_file, outdir, abund_f, perc_abund, log_file):
+        self.blast_run, self.makedb, self.outdir, self.threads, self.word_size = blast_run, makedb, outdir, threads, word_size
+        self.trf_file = trf_file
+        self.outdir_reblast = self.outdir + '/ReBlast/'
+        self.out_blast = self.outdir_reblast + 'blast_sec.tab'
         self.out_clust = self.outdir_reblast + '/seq_clust.clst'
-        self.nanoTRF=self.outdir+'/TR_nanotrf.fasta'
-        self.end_nano=self.outdir+'/nanoTRF.fasta'
-        self.Reclust_log=getLog(log_file,'Reclustering')
-        self.abund_f=abund_f
-        self.perc_abund=perc_abund
-        self.nanoTRF_abund = self.outdir+'/abund_nanotrf.tab'
+        self.nanoTRF = self.outdir + '/TR_nanotrf.fasta'        
+        self.end_nano = consensus_name
+        self.Reclust_log = getLog(log_file, 'Reclustering')
+        self.abund_f = abund_f
+        self.perc_abund = perc_abund
+        self.nanoTRF_abund = self.outdir + '/abund_nanotrf.tab'
+        self.tab_all=tab_name
         self.BLAST()
-        self.list_BLAST =self.Blast_parsing()
-        self.fasta_clust=self.createGraph(self.list_BLAST)
+        self.list_BLAST = self.Blast_parsing()
+        self.fasta_clust = self.createGraph(self.list_BLAST)
         self.filt_clust(self.fasta_clust)
         self.nano_end()
+        self.tab_nano()
 
     def BLAST(self):
-        #all-versus-all comparisons of TRs
+        # all-versus-all comparisons of TRs
         self.Reclust_log.info('BLAST database  is making')
-        
+
         os.system('{0} -in {1} -out seqdb -dbtype nucl'.format(self.makedb, self.trf_file))
         self.Reclust_log.info('Blastn with file {0} is running'.format(self.trf_file))
-        os.system("{0} -query {1} -db seqdb -out {2} -outfmt '6 qseqid sseqid pident qcovs' -num_threads {3} -word_size {4}".format(self.blast_run,self.trf_file, self.out_blast, self.threads,self.word_size))
-        #filtering  and removing similar strings and sequences with identity <80 and coverage <80
+        os.system(
+            "{0} -query {1} -db seqdb -out {2} -outfmt '6 qseqid sseqid pident qcovs' -num_threads {3} -word_size {4}".format(
+                self.blast_run, self.trf_file, self.out_blast, self.threads, self.word_size))
+        # filtering  and removing similar strings and sequences with identity <80 and coverage <80
+
     def Blast_parsing(self):
-        #parsing BLAST table
+        # parsing BLAST table
         l_BLAST = {}
-        l_2=[]
-        self.Reclust_log.info('Table filtration after Blastn is running'+'\n')
+        l_2 = []
+        self.Reclust_log.info('Table filtration after Blastn is running' + '\n')
         with open(self.out_blast) as pars_tab:
-            count=0
+            count = 0
             for stB in pars_tab:
-                id_q=stB.split('\t')[0]
-                id_s=stB.split('\t')[1]
-                v_ident=stB.split('\t')[2]
-                q_cov=stB.split('\t')[3]
-                if id_q!=id_s and float(v_ident)>=70 and float(q_cov)>=80:
-                    id_q_s='{0},{1}'.format(id_q,id_s)
+                id_q = stB.split('\t')[0]
+                id_s = stB.split('\t')[1]
+                v_ident = stB.split('\t')[2]
+                q_cov = stB.split('\t')[3]
+                if id_q != id_s and float(v_ident) >= 70 and float(q_cov) >= 80:
+                    id_q_s = '{0},{1}'.format(id_q, id_s)
                     id_s_q = '{1},{0}'.format(id_q, id_s)
                     if (id_q_s not in l_BLAST) and (id_s_q not in l_BLAST):
-                        l_BLAST[id_q_s]=0
-                        count+=1
+                        l_BLAST[id_q_s] = 0
+                        count += 1
                         l_2.append(id_q_s)
             self.Reclust_log.info('{0} pairs have been added for clustering analysis\n'.format(count))
             self.Reclust_log.info('Table filtration after Blastn is done')
         return l_2
 
-    def createGraph(self,list_BLAST):
-        #graph creating
+    def createGraph(self, list_BLAST):
+        # graph creating
         centroid_name = []
         self.Reclust_log.info('Edge addition is running\n')
-        with open(self.out_clust,'w') as clust_t:
+        with open(self.out_clust, 'w') as clust_t:
             count_clust = 0
             Graph_TR = nx.Graph()
             for edge in list_BLAST:
@@ -119,56 +127,56 @@ class Reclustering():
                 Graph_TR.add_node(edge_s)
                 Graph_TR.add_edge(edge_f, edge_s)
             self.Reclust_log.info('Appending the nodes and edges is done.Generate connected components\n')
-            self.Reclust_log.info('Creating graph is running'+'\n')
+            self.Reclust_log.info('Creating graph is running' + '\n')
             connected_components = nx.connected_components(Graph_TR)
             self.Reclust_log.info('Number of clusters: {0}'.format(nx.number_connected_components(Graph_TR)))
             for num, clusters in enumerate(connected_components):
-                count_clust+=1
-                #Appending the number nodes in cluster
+                count_clust += 1
+                # Appending the number nodes in cluster
                 node_list = []
-                degree_centroid=0
-                name_centroid=0
+                degree_centroid = 0
+                name_centroid = 0
                 for element in clusters:
-                    #number of element degree
-                    degree_elem=Graph_TR.degree[element]
+                    # number of element degree
+                    degree_elem = Graph_TR.degree[element]
                     node_list.append(element)
                     # degree_list.append(degree_elem)
                     if degree_elem > degree_centroid:
-                        degree_centroid=degree_elem
-                        name_centroid=element
-                self.Reclust_log.info('Centroid is {0} for {1} cluster'. format(name_centroid,count_clust)+'\n')
+                        degree_centroid = degree_elem
+                        name_centroid = element
+                self.Reclust_log.info('Centroid is {0} for {1} cluster'.format(name_centroid, count_clust) + '\n')
                 for num in node_list:
-                    if num!=name_centroid:
-                        ref_num='cluster_{}'.format(num.split('/')[0].split('clust')[-1])
-                        ref_cent= 'cluster_{}'.format(name_centroid.split('/')[0].split('clust')[-1])
+                    if num != name_centroid:
+                        ref_num = 'cluster_{}'.format(num.split('/')[0].split('clust')[-1])
+                        ref_cent = 'cluster_{}'.format(name_centroid.split('/')[0].split('clust')[-1])
                         centroid_name.append(num)
-                        clust_t.write('{0}|{1}\n'.format(ref_cent,ref_num))
-            
+                        clust_t.write('{0}|{1}\n'.format(ref_cent, ref_num))
+
             self.Reclust_log.info('Searching of centroid in all clusters is done. Creating graph is running\n')
             self.Reclust_log.info('Сentroid search in clusters is done')
             self.Reclust_log.info('Creating graph is done')
         return centroid_name
 
-    def filt_clust(self,fasta_clust):
-        elem_tab=[]
-        abund_dict={}
-        abund_dict2={}
-        
-        with open(self.nanoTRF,'w') as tr_nano:
-            for seq in SeqIO.parse(self.trf_file,'fasta'):
+    def filt_clust(self, fasta_clust):
+        elem_tab = []
+        abund_dict = {}
+        abund_dict2 = {}
+
+        with open(self.nanoTRF, 'w') as tr_nano:
+            for seq in SeqIO.parse(self.trf_file, 'fasta'):
                 if seq.id not in fasta_clust:
-                    SeqIO.write(seq,tr_nano,'fasta')
-        #cons_clust48/1949_32_167|cons_clust15/1215_56_167
+                    SeqIO.write(seq, tr_nano, 'fasta')
+        # cons_clust48/1949_32_167|cons_clust15/1215_56_167
         with open(self.abund_f) as abund_f, open(self.out_clust) as clust_t:
             for st in abund_f:
-                sp=st.rstrip().split('\t')
+                sp = st.rstrip().split('\t')
                 if sp[0] not in abund_dict:
-                    abund_dict[sp[0]]=sp[1]
+                    abund_dict[sp[0]] = sp[1]
             for seq in clust_t:
-                sp=seq.split('|')
+                sp = seq.split('|')
                 sp1 = seq.split('|')[-1].rstrip()
                 if sp[0] not in abund_dict2:
-                    abund_dict2[sp[0]]=[]
+                    abund_dict2[sp[0]] = []
                     abund_dict2[sp[0]].append(abund_dict[sp[0]])
                     abund_dict2[sp[0]].append(abund_dict[sp1])
                     elem_tab.append(sp[1].rstrip())
@@ -177,37 +185,45 @@ class Reclustering():
                     elem_tab.append(sp[1].rstrip())
             for seq in abund_dict:
                 if seq not in abund_dict2 and seq not in elem_tab:
-                    abund_dict2[seq]=abund_dict[seq]
-        with open(self.nanoTRF_abund,'w') as nano_abund:
+                    abund_dict2[seq] = abund_dict[seq]
+        with open(self.nanoTRF_abund, 'w') as nano_abund:
             nano_abund.write('Cluster number\tAbundancy,%\n')
             for seq in abund_dict2:
-                count_ab=0
+                count_ab = 0
                 if type(abund_dict2[seq]) is list:
                     for el in abund_dict2[seq]:
-                        count_ab+=float(el)
+                        count_ab += float(el)
                 else:
-                    count_ab+=float(abund_dict2[seq])
-                nano_abund.write('{0}\t{1:.5f} \n'.format(seq,count_ab*100))
+                    count_ab += float(abund_dict2[seq])
+                nano_abund.write('{0}\t{1:.5f} \n'.format(seq, count_ab * 100))
+
     def nano_end(self):
-        with open(self.nanoTRF_abund) as nano_abund,open(self.nanoTRF) as tr_nano,open(self.end_nano,'w') as nano:
-            dict_f={}
+        with open(self.nanoTRF_abund) as nano_abund, open(self.nanoTRF) as tr_nano, open(self.end_nano, 'w') as nano:
+            dict_f = {}
             for seq in nano_abund:
-                sp=seq.split('\t')
-                n_clust=sp[0].split('_')[-1].rstrip()
+                sp = seq.split('\t')
+                n_clust = sp[0].split('_')[-1].rstrip()
                 print(n_clust)
                 if n_clust not in dict_f:
-                    dict_f[n_clust]=sp[-1].rstrip()
-            for seq in SeqIO.parse(tr_nano,'fasta'):
-                n_cl=seq.id.split('/')[0].split('clust')[-1]           
-               
-                sp=seq.id.split('_') 
-                if float(dict_f[n_cl])>=float(self.perc_abund):
-                    if len(sp)==3:
-                        len_s='monomer_length:{}bp'.format(sp[-2].split('/')[-1])
-                        abund_cl='cluster_abundance:{}%'.format(dict_f[n_cl])
-                        nano.write('>clust{0} {1} {2}\n{3}\n'.format(n_cl,len_s,abund_cl,seq.seq))
-                            
-                    if len(sp)==4:
-                        len_s='monomer_length:{}bp'.format(sp[-1])
-                        abund_cl='cluster_abund:{}%'.format(dict_f[n_cl])
-                        nano.write('>clust{0} {1} {2}\n{3}\n'.format(n_cl,len_s,abund_cl,seq.seq))
+                    dict_f[n_clust] = sp[-1].rstrip()
+            for seq in SeqIO.parse(tr_nano, 'fasta'):
+                n_cl = seq.id.split('/')[0].split('clust')[-1]
+
+                sp = seq.id.split('_')
+                if float(dict_f[n_cl]) >= float(self.perc_abund):
+                    if len(sp) == 3:
+                        len_s = 'monomer_length:{}bp'.format(sp[-2].split('/')[-1])
+                        abund_cl = 'cluster_abundance:{}%'.format(dict_f[n_cl])
+                        nano.write('>clust{0} {1} {2}\n{3}\n'.format(n_cl, len_s, abund_cl, seq.seq))
+
+                    if len(sp) == 4:
+                        len_s = 'monomer_length:{}bp'.format(sp[-1])
+                        abund_cl = 'cluster_abund:{}%'.format(dict_f[n_cl])
+                        nano.write('>clust{0} {1} {2}\n{3}\n'.format(n_cl, len_s, abund_cl, seq.seq))
+    def tab_nano(self):
+        with open(self.tab_all,'w') as tab_TR, open(self.end_nano) as nano:
+            tab_TR.write('ID\tmonomer length\tabundance\n')
+            for seq in SeqIO.parse(nano,'fasta'):
+                tab_s='{0}\t{1}\t{2}\n'.format(seq.description.split(' ')[0], len(seq.seq), seq.description.split('abund:')[-1])
+                tab_TR.write(tab_s)
+
