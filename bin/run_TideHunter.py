@@ -17,9 +17,9 @@ class TideHunter_run():
 
     def _run_TH(self):
         self.log_th.info("TideHunter has started ....")
-        os.system('{0} -f 2 {1} > {2}'.format(self.TH_path, self.input_fasta, self.outTab))
+        os.system('{0} -f 2 {1} -t {3} > {2}'.format(self.TH_path, self.input_fasta, self.outTab,self.threads))
         self.log_th.info("TideHunter has finished ..... Generation of the consensus sequence is done")
-        os.system('{0} -u {1} > {2}'.format(self.TH_path, self.input_fasta, self.outFasta_all_monomersTH))
+        os.system('{0} -u {1}  -t {3} > {2}'.format(self.TH_path, self.input_fasta, self.outFasta_all_monomersTH,self.threads))
         self.log_th.info("TideHunter has finished ..... Generation of the unit sequences of each tandem repeat is done")
 
     def _tab2fasta(self):
