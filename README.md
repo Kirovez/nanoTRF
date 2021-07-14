@@ -26,7 +26,7 @@ tar -zxvf nanoTRF-v1.0.0.tar.gz && cd TideHunter-v1.0.0
 
 ## <a name="introduction"></a>Introduction
 
-NanoTRF is a software tool to *de novo* search high-copy tandem repeats which is designed for raw long-read sequences. It works with Oxford Nanopore Technologies (ONT) and Pacific Biosciences (PacBio) sequencing data.
+NanoTRF is a software tool to *de novo* search high-copy tandem repeats designed for raw long-read sequences. It works with Oxford Nanopore Technologies (ONT) and Pacific Biosciences (PacBio) sequencing data.
 
 ## <a name="install"></a>Installation
 
@@ -51,14 +51,14 @@ tar -zxvf nanoTRF-v1.0.0.tar.gz && cd TideHunter-v1.0.0
 ```
 **We recommended create a folder and running the pipeline in the previously established directory**
 
-Before you start, you need to make sure that all program and packages specified below is already installed on your computer. For running nanoTRF  you will need to specify the path of the program through special flags:
+Before you start, you need to ensure that all programs and packages specified below are already installed on your computer. For running nanoTRF, you will need to select the path of the program through special flags:
 
-- blastn and makeblastdb programs. The paths to these programs can be set via **-b** and **-mb** flags, respectively
-- TideHunter program. It is recommended to download the [latest release of TideHunter](https://github.com/yangao07/TideHunter/releases). The paths to these programs can be set via **-pTH** flags
+- blastn and makeblastdb programs. Users can set the paths to these programs via **-b** and **-mb** flags, respectively
+- TideHunter program. It is recommended to download the [latest release of TideHunter](https://github.com/yangao07/TideHunter/releases). Users can set the paths to these programs via **-pTH** flags
 - Canu program. The latest release [can be download here](http://github.com/marbl/canu/releases). The paths to these programs can be set via **-cu** flags
 - java
 - python >= v3.6
-- python packages to be installed: biopython, networkx. To install these packages run the following command
+- Python packages to be installed: biopython, networkx. To install these packages, run the following command
 ```
  pip install matplotlib biopython networkx python-louvain
 ```
@@ -66,7 +66,7 @@ or
 ```
 pip3 install matplotlib biopython networkx python-louvain
 ```
-Important note! If you have a community python module installed you need to delete it because it interferes with the python-louvain module used by nanoTRF. Use this command to delete the community module:
+Important note! Suppose you have a community python module installed. In that case, you need to delete it because it interferes with the python-louvain module used by nanoTRF. Use this command to delete the community module:
 ```
 pip3 uninstall community
 ```
@@ -123,7 +123,7 @@ Options:
     -th, --threads      STR      number of threads for running blast, canu. (Default=4)
 
   Additional option:
-    -c --cleanup    STR      remove unncessary large files and directories from working directory [False]
+    -c --cleanup    STR      remove unnecessary large files and directories from working directory [False]
     
     
 -h, --help  - show this help message and exit
@@ -145,7 +145,7 @@ NanoTRF generates output in tabular format:
 
 ### <a name="output"></a>Fasta file
 
-NanoTRF generates TRs consensus sequences in FASTA format which contents information about TRs. The sequence descriptions have the following format:
+NanoTRF generates TRs consensus sequences in FASTA format, which contents information about TRs. The sequence descriptions have the following format:
 ```
 >clustname monomer_length cluster_abund
 
