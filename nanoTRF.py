@@ -1,9 +1,9 @@
 """
-NanoTRF is a pipeline for de novo identification and sequence assembly of high-copy tandem repeats in raw data ONT plant DNA data,
+NanoTRF is a pipeline for de novo identification and sequence assembly of high-copy tandem repeats in raw data ONT plant DNA data
 to calculate TRs copy number variation and assembly consensus sequences for further analyses (e.g. FISH).
 
-NanoTRF-based TRs search and reconstruction of the consensus sequences has 9 main steps:
-    1) preparation read for following analysis - converting FASTQ format into FASTA (if input file in FASTQ format) - module read_preparation
+NanoTRF-based TRs search and reconstruction of the consensus sequences has nine main steps:
+    1) preparation read for the following analysis - converting FASTQ format into FASTA (if input file in FASTQ format) - module read_preparation
     2) tandem repeat detection - module run_TideHunter,
     3) searching for the similarity in previously identifying on the 1st step tandem repeats  - module run_BLAST,
     4) clustering repeat sequences - module Louv_clustering,
@@ -85,6 +85,7 @@ def main():
     ##READ PREPARATION##
 
     read_data = read_preparation.PrepareReads(reads)
+    
     #########TH##########
     TH_outFasta=''
     TH_raw_tab=''
@@ -114,7 +115,7 @@ def main():
 
     clustering_outTab = louv_module_data.clustering_outTab
 
-    Filt_data = FilterRep.FilteringLouvTab(clustering_outTab, singleton_list, outDirectory, reads,
+    Filt_data = FilterRep.FilteringLouvTab(clustering_outTab, singleton_list, outDirectory, read_data.read_file,
                                            TH_all_monomers, minCopy,log_file)
     tableFilt = Filt_data.filtering_outTab
     abund_tab = Filt_data.clust_abund
@@ -142,10 +143,13 @@ def main():
     ###Delete directories###
     os.system('rm {0}consensus.fasta*html'.format(out_trf))
     del_log = getLog(log_file, "DELETE")
-    for file_t in os.listdir(outDirectory):
-        if os.path.isfile(outDirectory+file_t):
-            if file_t != outDirectory+'nanoTRF.fasta' or file_t != outDirectory+'TH.out.fasta' or file_t !=outDirectory+'TH.out.fasta.tab' or file_t != outDirectory+'TR_info.tab' or file_t !=outDirectory+ 'loging.log':
-                path_t = outDirectory + file_t
+    for file in os.listdir(outDirectory):
+        
+        if os.path.isfile(outDirectory+file):
+            print(file)
+            file=file.rstrip()
+            if file!= 'nanoTRF.fasta' and file!= 'TH.out.fasta' and file!='TH.out.fasta.tab' and file!= 'TR_info.tab' and file!='loging.log':
+                path_t = outDirectory + file
                 os.remove(path_t)
     for file in os.listdir(args.out_directory):
         if file.startswith('consensus.fasta') and file.endswith('html') and not os.path.isdir(args.out_directory+'/'+file):
