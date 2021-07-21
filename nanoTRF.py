@@ -1,9 +1,9 @@
 """
-NanoTRF is a pipeline for de novo identification and sequence assembly of high-copy tandem repeats in raw data ONT plant DNA data
+NanoTRF is a pipeline for de novo identification and sequence assembly of high-copy tandem repeats in raw data ONT plant DNA data,
 to calculate TRs copy number variation and assembly consensus sequences for further analyses (e.g. FISH).
 
-NanoTRF-based TRs search and reconstruction of the consensus sequences has nine main steps:
-    1) preparation read for the following analysis - converting FASTQ format into FASTA (if input file in FASTQ format) - module read_preparation
+NanoTRF-based TRs search and reconstruction of the consensus sequences has 9 main steps:
+    1) preparation read for following analysis - converting FASTQ format into FASTA (if input file in FASTQ format) - module read_preparation
     2) tandem repeat detection - module run_TideHunter,
     3) searching for the similarity in previously identifying on the 1st step tandem repeats  - module run_BLAST,
     4) clustering repeat sequences - module Louv_clustering,
@@ -130,7 +130,7 @@ def main():
 
     ###TRF###
 
-    TRF_out = Run_TRF.Run_TRF(path_TR, outDirectory, log_file)
+    TRF_out = Run_TRF.Run_TRF(path_TR, out_trf, log_file)
     re_blast = TRF_out.dir_trf
     trf_seq = TRF_out.filt_trf
 
