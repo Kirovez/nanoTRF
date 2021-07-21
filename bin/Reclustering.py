@@ -56,7 +56,7 @@ from Bio import SeqIO
 import warnings
 
 warnings.filterwarnings("ignore", category=UserWarning)
-
+import random
 
 class Reclustering():
     def __init__(self,consensus_name,tab_name, blast_run, makedb, threads, word_size, trf_file, outdir, abund_f, perc_abund, log_file):
@@ -102,7 +102,7 @@ class Reclustering():
                 id_s = stB.split('\t')[1]
                 v_ident = stB.split('\t')[2]
                 q_cov = stB.split('\t')[3]
-                if id_q != id_s and float(v_ident) >= 70 and float(q_cov) >= 80:
+                if id_q != id_s and float(v_ident) >= 80 and float(q_cov) >= 85:
                     id_q_s = '{0},{1}'.format(id_q, id_s)
                     id_s_q = '{1},{0}'.format(id_q, id_s)
                     if (id_q_s not in l_BLAST) and (id_s_q not in l_BLAST):
@@ -149,6 +149,8 @@ class Reclustering():
                     if num != name_centroid:
                         ref_num = 'cluster_{}'.format(num.split('/')[0].split('clust')[-1])
                         ref_cent = 'cluster_{}'.format(name_centroid.split('/')[0].split('clust')[-1])
+                        
+                        
                         centroid_name.append(num)
                         clust_t.write('{0}|{1}\n'.format(ref_cent, ref_num))
 
@@ -162,6 +164,7 @@ class Reclustering():
         abund_dict = {}
         abund_dict2 = {}
 
+#те, в которых были найдены паттерны повторяющиеся 
         with open(self.nanoTRF, 'w') as tr_nano:
             for seq in SeqIO.parse(self.trf_file, 'fasta'):
                 if seq.id not in fasta_clust:
@@ -184,7 +187,8 @@ class Reclustering():
                     abund_dict2[sp[0]].append(abund_dict[sp1])
                     elem_tab.append(sp[1].rstrip())
             for seq in abund_dict:
-                if seq not in abund_dict2 and seq not in elem_tab:
+                seq=seq.rstrip() 
+                if (seq not in abund_dict2) and (seq not in elem_tab):
                     abund_dict2[seq] = abund_dict[seq]
         with open(self.nanoTRF_abund, 'w') as nano_abund:
             nano_abund.write('Cluster number\tAbundancy,%\n')
@@ -200,28 +204,33 @@ class Reclustering():
     def nano_end(self):
         with open(self.nanoTRF_abund) as nano_abund, open(self.nanoTRF) as tr_nano, open(self.end_nano, 'w') as nano:
             dict_f = {}
+            dict_k={}
             for seq in nano_abund:
                 sp = seq.split('\t')
                 n_clust = sp[0].split('_')[-1].rstrip()
                 print(n_clust)
                 if n_clust not in dict_f:
+                    
                     dict_f[n_clust] = sp[-1].rstrip()
             for seq in SeqIO.parse(tr_nano, 'fasta'):
                 n_cl = seq.id.split('/')[0].split('clust')[-1]
-
+                name_c= seq.id.split('/')[0].split('_')[-1].rstrip()
                 sp = seq.id.split('_')
-                if float(dict_f[n_cl]) >= float(self.perc_abund):
-                    if len(sp) == 3:
-                        len_s = 'monomer_length:{}bp'.format(sp[-2].split('/')[-1])
-                        abund_cl = 'cluster_abundance:{}%'.format(dict_f[n_cl])
-                        nano.write('>clust{0} {1} {2}\n{3}\n'.format(n_cl, len_s, abund_cl, seq.seq))
+                if n_cl in dict_f:
+                    if float(dict_f[n_cl])>= float(self.perc_abund):
+                        if len(sp) == 3:
+                            len_s = 'monomer_length:{}bp'.format(sp[-2].split('/')[-1])
+                            abund_cl = 'cluster_abundance:{}%'.format(dict_f[n_cl])
+                            nano.write('>clust{0} {1} {2}\n{3}\n'.format(n_cl, len_s, abund_cl, seq.seq))
 
-                    if len(sp) == 4:
-                        len_s = 'monomer_length:{}bp'.format(sp[-1])
-                        abund_cl = 'cluster_abund:{}%'.format(dict_f[n_cl])
-                        nano.write('>clust{0} {1} {2}\n{3}\n'.format(n_cl, len_s, abund_cl, seq.seq))
+                        if len(sp) == 4:
+                            len_s = 'monomer_length:{}bp'.format(sp[-1])
+                            abund_cl = 'cluster_abundance:{}%'.format(dict_f[n_cl])
+                            nano.write('>clust{0} {1} {2}\n{3}\n'.format(n_cl, len_s, abund_cl, seq.seq))
+
     def tab_nano(self):
         with open(self.tab_all,'w') as tab_TR, open(self.end_nano) as nano:
+            dict_tab={}
             tab_TR.write('ID\tmonomer length\tabundance\n')
             for seq in SeqIO.parse(nano,'fasta'):
                 tab_s='{0}\t{1}\t{2}\n'.format(seq.description.split(' ')[0], len(seq.seq), seq.description.split('cluster_abundance:')[-1].split('%')[0])
