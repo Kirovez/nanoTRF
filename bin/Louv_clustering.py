@@ -37,4 +37,3 @@ class LouvClustering():
             out.write("Sequence\tCluster\n")
             for num, sequence in enumerate(partition):
                 out.write("{0}\t{1}\n".format(sequence, partition[sequence]))
-
