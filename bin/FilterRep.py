@@ -55,7 +55,7 @@ class FilteringLouvTab():
                 abund_seq = countRep * countLen
                 cluster_abundancy[sp[-1]] += abund_seq      
             for clust in copyNum:
-                if copyNum[clust]>=int(mincopy):
+                if copyNum[clust]>=int(self.mincopy):
                     list_clust.append(clust)
             print(list_clust)
             
@@ -103,25 +103,6 @@ class FilteringLouvTab():
                             fastaWr.write(reFSeqMnm) 
                         
         self.filt_log.info('Filtering and preparing file with monomer sequences has finished')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
