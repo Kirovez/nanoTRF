@@ -99,12 +99,8 @@ class ConsAssembly():
         with open(self.consensus_fasta,'a') as ConsensusFile:
             for seq in SeqIO.parse(self.outFasta,'fasta'):
                 if seq.id in dir_nBlast:
-                    ConsensusFile.write('>cons_clust{0}/{1}_n\n{2}\n'.format(dir_nBlast[seq.id].rstrip(),seq.id.split('*')[-2],seq.seq))
-                
+                    ConsensusFile.write('>cons_clust{0}/{1}_n\n{2}\n'.format(dir_nBlast[seq.id].rstrip(),seq.id.split('*')[-2],seq.seq))            
            
                 
             
-        self.canu_log.info("FINISHED.{} consensus sequences was generated".format(countDir))
-
-
- 
+        self.canu_log.info("FINISHED.{} consensus sequences was generated".format(countDir)) 
