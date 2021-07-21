@@ -30,7 +30,7 @@ class Run_TRF():
     def __init__(self,TRF,outdir, log_name):
         self.outdir=outdir
         self.nano=outdir
-        self.dir_trf=self.nano+'/ReBlast/'
+        self.dir_trf=self.nano+'nanoTRF/ReBlast/'
         self.run_TRF=TRF       
       
         self.file_num = self.dir_trf+'/TRF_seq_dr.fasta'
@@ -52,7 +52,7 @@ class Run_TRF():
         #running TRF and selecting the sequences from txt.html report
         self.TRF_log.info("Creating files with consensus sequences for each monomer has started..")
         #running TRF
-        run_trf='{0} {1} 2 7 7 80 10 50 2000'.format(self.run_TRF,self.outdir+'/consensus.fasta')
+        run_trf='{0} {1} 2 7 7 80 10 50 2000'.format(self.run_TRF,self.outdir+'/nanoTRF/consensus.fasta')
         self.TRF_log.info('TRF has started')
         os.system(run_trf)
         self.TRF_log.info('TRF has finished')
@@ -82,26 +82,23 @@ class Run_TRF():
                 seq_id='cons_{0}_{1}'.format(seq.id.split('_')[1], seq.id.split('_')[2])
                 if seq_id not in seq_cons:
                     seq_cons[seq_id] = []
-                    seq_cons[seq_id].append(str(seq.seq))
+                    ####################новое
+                    if seq.seq not in seq_cons[seq_id]:
+                        seq_cons[seq_id].append(str(seq.seq))
                 else:
-                    seq_cons[seq_id].append(str(seq.seq))
+                    if seq.seq not in seq_cons[seq_id]:
+                        seq_cons[seq_id].append(str(seq.seq))
             for seq_id in seq_cons:
                 count=0
                 seq_n=0
                 for el_seq in seq_cons[seq_id]:
-                    if count==0:
-                        seq_n=el_seq
-                        count=len(seq_n)
-                    else:
-                        if len(el_seq)<count:
-                            count=len(el_seq)
-                            seq_n=el_seq
-                if count>15:
-                    wfile.write('>{0}_{2}\n{1}\n'.format(str(seq_id), str(seq_n), count))
+                    if len(el_seq)>15:
+                    
+                        wfile.write('>{0}_{2}\n{1}\n'.format(str(seq_id), str(el_seq), len(el_seq)))
                 list_cons.append(str(seq_id))
         self.TRF_log.info('Generation file with TRF consensus pattern has finished')
         self.TRF_log.info('Addition sequences not included in the TRF analysis to the output file')
-        for seq in SeqIO.parse(self.outdir+'/consensus.fasta','fasta'):
+        for seq in SeqIO.parse(self.outdir+'/nanoTRF/consensus.fasta','fasta'):
             if seq.id not in list_cons:
                 with open(self.filt_trf, 'a') as file_all:
                     file_all.write('>{0}\n{1}\n'.format(seq.id,seq.seq))
