@@ -47,12 +47,12 @@ For running nanoTRF, please activate the conda environment:
 
 To generate consensus sequences in FASTA format file (with usage default optional arguments):
 ```
-python3 ./nanoTRF.py -r test.fasta  -o./test/
+python3 ./nanoTRF.py -r ./test_seq/test_4th_Linum.fasta -pTH TideHunter  -o ./test/ -mad 0.01
 ```
 If TideHunter output table (run with -f option) was generated before then you can pass this file via -T option and nanoTRF will skip TideHunter step
 
 ```
-python3 ./nanoTRF.py -r test.fasta -o ./test/ -T TH.tab
+python3 ./nanoTRF.py -r ./test_seq/test_4th_Linum.fasta -pTH TideHunter  -o ./test/ -mad 0.01 -T TH.tab
 ```
 
 ## <a name="cmd"></a>Command and options
