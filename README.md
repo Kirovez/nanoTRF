@@ -188,7 +188,7 @@ This file containes the information from tabular file and some pictures includin
 
 
 ### <a name="output"></a> Folder `clusters`
-This folder contains information for each cluster including consensus contigs fiele, reads from each cluster and figures used for html generation
+This folder contains information for each cluster including consensus contig files, reads from each cluster and figures used for html generation
 
 
 ## <a name="authors"></a>Authors
