@@ -177,14 +177,19 @@ NanoTRF generates output in tabular format:
 |  8  | Annotation  | Transposon domains and number of reads with similarity to
 
 
-### <a name="output"></a>Fasta file
+### <a name="output"></a>Fasta file `consensus.fasta`
 
 NanoTRF generates 'consensus.fasta' file which contains TRs consensus sequences assembled by Cap3. 
 
 
-### <a name="output"></a>Html file 
+### <a name="output"></a>Html file `index.html`
 
 This file containes the information from tabular file and some pictures including graph layout, read coverage histogram and read coverage pie chart
+
+
+### <a name="output"></a> Folder `clusters`
+This folder contains information for each cluster including consensus contigs fiele, reads from each cluster and figures used for html generation
+
 
 ## <a name="authors"></a>Authors
 
