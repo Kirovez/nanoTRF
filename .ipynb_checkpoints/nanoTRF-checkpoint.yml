@@ -1,0 +1,27 @@
+name: nanoTRF
+channels:
+  - bioconda
+  - defaults
+dependencies:
+  - blast=2.5.0=hc0b0e79_3
+  - java-jdk=8.0.92=1
+  - ld_impl_linux-64=2.33.1=h53a641e_7
+  - pip=21.0.1=py36h06a4308_0
+  - python=3.6.13=hdb3f193_0
+  - readline=8.1=h27cfd23_0
+  - six=1.15.0=py36h06a4308_0
+  - tidehunter=1.4.3=h8b12597_0 
+  - trf=4.09.1=h516909a_0  
+  - openjdk=8.0.152=h7b6447c_3
+  - cap3=10.2011
+
+  
+  - pip:
+    - biopython==1.78   
+    - community==1.0.0b1 
+    - networkx==2.5.1
+    - numpy==1.19.5
+    - python-louvain==0.15  
+    - matplotlib
+    - scipy
+

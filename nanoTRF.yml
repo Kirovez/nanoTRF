@@ -13,6 +13,8 @@ dependencies:
   - tidehunter=1.4.3=h8b12597_0 
   - trf=4.09.1=h516909a_0  
   - openjdk=8.0.152=h7b6447c_3
+  - cap3=10.2011
+
   
   - pip:
     - biopython==1.78   
@@ -20,4 +22,6 @@ dependencies:
     - networkx==2.5.1
     - numpy==1.19.5
     - python-louvain==0.15  
+    - matplotlib
+    - scipy
 

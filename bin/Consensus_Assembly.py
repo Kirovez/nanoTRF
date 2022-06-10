@@ -2,12 +2,18 @@ import os
 import argparse
 from Bio import AlignIO
 from Bio import SeqIO
+import subprocess
+          
+import time
+from timeit import default_timer as timer
+from multiprocessing import Process, Queue, Pool
+
 
 from bin.helpers.help_functions import getLog
 
 
 class ConsAssembly():
-    def __init__(self,canu,filtering_outTab,singleton_list,outFasta,outdir,log_file,min_overlap,threads):
+    def __init__(self,cap3,filtering_outTab,singleton_list,outFasta,outdir,log_file,min_overlap,threads):
         self.threads=threads
         self.filtering_outTab=filtering_outTab
         self.min_overlap=min_overlap
@@ -16,91 +22,110 @@ class ConsAssembly():
         self.outFasta=outFasta
         self.outdir_clust=outdir+'/clusters/'
         self.outdir_canu=outdir+'/canu/'
-        self.canuRun=canu
+        self.cap3=cap3
+        self.dic_assembly_details = {} # clustN:[contig_size min, contig_size max, contig1 sequence]
         self.singleton_list=singleton_list
         self.canu_log = getLog(log_file, "Consensus assembly")
         self.canu_log.info("CONSENSUS ASSEMBLY has started...")
-        self.createfile()
-        self.dirFile_canu=self.runCanu()        
-        self.writeFileCan()
+        self.read_fasta_per_cluster_list = self.createfile()
+        self.path_to_contigs_all_clusters=self.start_paral_cap3() #self.runCAP3()        
+        self.writeFileCAP3(self.path_to_contigs_all_clusters)
 
     def createfile(self):
+        created_files = []
         with open(self.filtering_outTab) as filtFasta:
             if os.path.exists(self.outdir_clust):
                 self.canu_log.info("!!ERROR!! Directory specified 'clust' exists.")
             else:
-           
                 os.mkdir(self.outdir_clust)
                 self.canu_log.info("Directory 'clust' has created")
             self.canu_log.info("Creating file with monomer sequences for each clusters has started...")        
-          
             for seq in SeqIO.parse(filtFasta, 'fasta'):
                 name_file = 'clust{}.fasta'.format(seq.id.split('/')[-1])
                 FileFullPath = os.path.join(self.outdir_clust, name_file)
-                if name_file not in os.listdir(self.outdir_clust):
+                if FileFullPath not in created_files:#os.listdir(self.outdir_clust):
                     t = 'w'
                     self.canu_log.info("File with sequences for {} cluster has created".format(seq.id.split('/')[-1]))
+                    created_files.append(FileFullPath)
                 else:
                     t = 'a'
                 handle = open(FileFullPath,t)
                 SeqIO.write(seq,handle,'fasta')
                 handle.close()
+                
             self.canu_log.info("Creating all files have finished")
+        return created_files
 
-    def runCanu(self):
-        if os.path.exists(self.outdir_canu):
-            self.canu_log.info("!!ERROR!! Directory specified 'canu' exists.")
+    def cap3_run(self,fasta_file, qout):
+        f = open(fasta_file + "cap.log" , 'w') 
+        run = subprocess.run([self.cap3, fasta_file, '-h', '100', '-n', '-2', '-m', '3', '-p', '80', '-s', '600'],  check=True, stdout=f) #os.system(run_Canu)
+        f.close()
+        contigs_fasta = fasta_file + '.cap.contigs'
+        contigs_ace = fasta_file + '.ace'
+        qout.put(contigs_fasta)
+
+    
+
+    def start_paral_cap3(self, threads = 100):
+        path_to_contigs_all_clusters = {}
+        fasta_files = self.read_fasta_per_cluster_list
+        cnt_f = len(fasta_files)
+        cnt_0_cap3 = 0 # number of caps file contigs with size 0
+        #print('Cluster files:', os.listdir(self.outdir_clust))
+        qout = Queue()
+        start = timer()
+
+        self.canu_log.info(f'CONSENSUS ASSEMBLY FOR {cnt_f} CLUSTERS IS GOING ....')
+
+        all_processes = []
+        for process in range(len(fasta_files)):
+            p = Process(target=self.cap3_run, args = (fasta_files[process], qout, ))
+            p.start()
+            all_processes.append(p)
+
+        for p in all_processes:
+            p.join()
+
+        end = timer()
+        self.canu_log.info(f'Elapsed time for consensus assembly: {end - start}')
         
-        else:
-            os.mkdir(self.outdir_canu)
-            self.canu_log.info("Directory 'canu' has created")          
+        for i in fasta_files:
+            contig_generated_by_cap3 = qout.get()
+            stats = os.stat(contig_generated_by_cap3)
+            #print(contig_generated_by_cap3, stats.st_size, 'bytes')
+            clustN = 'clust' + contig_generated_by_cap3.split('clust')[-1].split('.')[0]
+            if stats.st_size != 0:
+                path_to_contigs_all_clusters[clustN] = contig_generated_by_cap3 #clustN:path to contigs
+                #print(path_to_contigs_all_clusters[clustN])
+                monomer_size_contig1seq = self.getMonomerSizeContig1seq(path_to_contigs_all_clusters[clustN]) # [min len, max len]
+                self.dic_assembly_details[clustN] = monomer_size_contig1seq
+            else:
+                cnt_0_cap3 += 1
+                self.canu_log.warning(f"Cluster {clustN} failed to be assembled by CAP3")
+                self.dic_assembly_details[clustN] = ['Cap3 failed','Cap3 failed','Cap3 failed']
+        self.canu_log.info(f'Number of clusters with no successful assembly by Cap3:{cnt_0_cap3}')
+        return path_to_contigs_all_clusters
+    
           
-        for fasta in os.listdir(self.outdir_clust):
-            name_Dir=fasta.split('.fasta')[0]
-            path_Dir=self.outdir_canu+name_Dir
-            os.mkdir(path_Dir)
-            run_Canu = '{0} -p {1} -d {2} useGrid=0 -nanopore-raw {3} genomeSize=1000 minReadLength=25 minOverlapLength={4} corMinCoverage=0 stopOnLowCoverage=0 merylThreads={5}'.format(self.canuRun,name_Dir,path_Dir,self.outdir_clust+fasta,self.min_overlap,self.threads)
-            self.canu_log.info("Canu for {} has started".format(name_Dir))
-            run = os.system(run_Canu)
-          
-
-
-    def writeFileCan(self):
+    def getMonomerSizeContig1seq(self, path_to_contigs_all_clusters):
+        ms = []
+        contig1_seq = ''
+        for seq in SeqIO.parse(path_to_contigs_all_clusters, 'fasta'):
+            ms.append(len(seq.seq))
+            if seq.id == 'Contig1':
+                contig1_seq = str(seq.seq)
+        return [min(ms), max(ms), contig1_seq]
+            
+    def writeFileCAP3(self, path_to_contigs_all_clusters):
         self.canu_log.info("Generation consensus file....")
         with open(self.consensus_fasta,'w') as ConsensusFile:
             countDir = 0
-            for dirClust in os.listdir(self.outdir_canu):
+            for clust in path_to_contigs_all_clusters:
                 countDir+=1
-                path_canudir=self.outdir_canu+dirClust+'/'
-                for fasta in os.listdir(path_canudir):
-                    fasta_name=dirClust+'.contigs.fasta'
-                    if os.path.exists(path_canudir+fasta_name)  :
-                        if fasta.endswith('.contigs.fasta'):
-                            len_max=0
-                            name_tig=''
-                            for seq in SeqIO.parse(self.outdir_canu+dirClust+'/'+fasta,'fasta'):
-                                sp0 = seq.description.split(' ')
-                                len_reads=float(sp0[2].split('=')[-1])
-                                if len_reads>len_max:
-                                    len_max =len_reads
-                                    tig_form='>cons_{2}/{0}_{1}'.format(sp0[1].split('=')[1],sp0[2].split('=')[1],fasta.split('.contig')[0])
-                                    seq_p = '{0}\n{1}\n'.format(tig_form,seq.seq)
-                                    name_tig=seq_p
-                            ConsensusFile.write(name_tig)
-                            self.canu_log.info("Consensus for {0} was added in consensus file".format(fasta))
-                    else:
-                        self.canu_log.info("!!!!Consensus sequences for {0} wasn't assembly!!!!".format(dirClust))
-        dir_nBlast={}
-        with open(self.singleton_list) as not_blast:
-            for seq in not_blast:
-                sp=seq.split('\t')
-                if sp[0] not in dir_nBlast and float(sp[0].split('*')[-1])>100:
-                    dir_nBlast[sp[0]]=sp[-1]
-        with open(self.consensus_fasta,'a') as ConsensusFile:
-            for seq in SeqIO.parse(self.outFasta,'fasta'):
-                if seq.id in dir_nBlast:
-                    ConsensusFile.write('>cons_clust{0}/{1}_n\n{2}\n'.format(dir_nBlast[seq.id].rstrip(),seq.id.split('*')[-2],seq.seq))            
-           
-                
-            
-        self.canu_log.info("FINISHED.{} consensus sequences was generated".format(countDir)) 
+                path_contigs_cap3=path_to_contigs_all_clusters[clust]
+                for seq in SeqIO.parse(path_contigs_cap3, 'fasta'):
+                    seq.id = clust + "_"  + seq.id
+                    SeqIO.write(seq, ConsensusFile, 'fasta')
+        self.canu_log.info(f"FINISHED. A single file {self.consensus_fasta} with all contigs was generated") 
+        
+ 

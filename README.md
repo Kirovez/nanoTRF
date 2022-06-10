@@ -76,57 +76,16 @@ pip3 uninstall community
 
 To generate consensus sequences in FASTA format file (with usage default optional arguments):
 ```
-python3 ./nanoTRF.py -r test.fasta -pTH  -cu ./bin/canu -o./test/
+python3 ./nanoTRF.py -r test.fasta  -o./test/
 ```
-To generate consensus sequences in FASTA format file, change the number of threads that will be used and remove 
-all unnecessary files and directories (with usage TideHunter files) using 30 threads:
+If TideHunter output table (run with -f option) was generated before then you can pass this file via -T option and nanoTRF will skip TideHunter step
+
 ```
-python3 ./nanoTRF.py -r test.fasta --cu ./bin/canu -o ./test/ -th 30 -d -T TH.tab TH.out.fasta
+python3 ./nanoTRF.py -r test.fasta -o ./test/ -T TH.tab
 ```
+
 ## <a name="cmd"></a>Command and options
 ```
-
-Options:
-  General options:
-      -h --help               show this help message and exit
- 
-
-  Input:
-    -r --reads          STR      path to FastQ or Fasta file (required argument!!!)
-    -T --run_th         STR      path to output files of the TideHunter (if previously TideHunter was running by user): 
-                                 table file with consensus sequences and fasta file with unique tandem repeats
-  Scoring parameters for partial order alignment:
-    -w --word_f       INT      word size for first BLAST searching. We recommend you not to change the default integer! (Default = 22)
-    -ws --wordsize_s   INT      word size for second BLAST searching. We recommend you not to change the default integer! (Default=15)
-    -ev --evalue        INT      expectation value (E) threshold for saving hits (Default=2)
-
-  Clustering parameters:
-    -m --min_copy       INT      The minimum number of TRs copy in the data (Default=100)
-    -mOVe --min_Overlap STR      the number of overlapping nucleotides between repeats in one cluster (De10]
-    -ca --perc_abund    STR      minimum value of the TR cluster abundancy. (Default = 0.009)
-
-  Path to programm for running nanoTRF:
-    -pTH --path_TH      STR      path to the location of TideHunter (Default=TideHinter)
-    -cu --canu          STR      path to the location of Canu (required argument!!!It's missing in the conda)
-    -trf --TRF_run      STR      path to the location (Default=trf)
-    -b --blast          STR      path to blastn executabled (Default=blastn)
-    -mb --makedb        STR      path to makeblastdb executable (Default=makeblastdb)
-
-  Output:
-    -o --out_directory  STR      path to work directory for output files where will be saved **(required argument!!!)
-    -lg --log_filepath  STR      path to file which list analysis parameters, modules, and files, contains messages generated 
-                                 in the various stages of the work (Default=loging.log)
-    -nano --nano_trf    STR      fasta file with the TRs consensus sequences (Default=nanoTRF.fasta)
-    -tab --nano_tab     STR      table file with the TRs abundancy (Default=TR_info.tab)
-
-  Сomputational resources:
-    -th, --threads      STR      number of threads for running blast, canu. (Default=4)
-
-  Additional option:
-    -c --cleanup    STR      remove unnecessary large files and directories from working directory [False]
-    
-    
--h, --help  - show this help message and exit
 
 ```
 ## <a name="input_output"></a>Input
@@ -138,21 +97,23 @@ NanoTRF generates output in tabular format:
 | №   | Column name | Description | 
 |:---:|   :---      | ---        |
 |  1  | Cluster     | Name and cluster number |
-|  2  | TRs length  | Length of the TRs consensus sequence |
-|  3  | Abundance   | Cluster abundancy (%)
-
+|  2  | min.Contig.Cap3.Length  | Min length of the contigs assembled by Cap3 |
+|  3  | max.Contig.Cap3.Length   | Max length of the contigs assembled by Cap3
+|  4  | Genome.portion   | Cluster abundancy in the genome (%)
+|  5  | Contig1.sequence   | Sequence of Contig1 from consensus.fasta
+|  6  | Subrepeats.seq   | Sequences of any detected subrepeats in Contig 1 by second run of TideHunter 
+|  7  | Subrepeats.len   | Length of subrepeats sequences
+|  8  | Annotation  | Transposon domains and number of reads with similarity to
 
 
 ### <a name="output"></a>Fasta file
 
-NanoTRF generates TRs consensus sequences in FASTA format, which contents information about TRs. The sequence descriptions have the following format:
-```
->clustname monomer_length cluster_abund
+NanoTRF generates 'consensus.fasta' file which contains TRs consensus sequences assembled by Cap3. 
 
-clustname          cluster number (for example clust0)
-monomer_length     length of the TRs sequence
-cluster_abund      cluster abundancy
 ```
+
+### <a name="output"></a>html file with cluster pictures
+
 ## <a name="authors"></a>Authors
 **Elizaveta Kolganova** [liza.colg@gmail.com](liza.colg@gmail.com)
 

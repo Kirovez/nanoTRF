@@ -11,6 +11,7 @@ class without_TH():
         self.tab2fasta()
     def tab2fasta(self):
         cnt = 0
+        print(self.outFasta, self.outTab)
         with open(self.outFasta, 'w') as outFasta, open(self.outTab) as outTab:
             for lines in outTab:
                 sp = lines.rstrip().split("\t")
