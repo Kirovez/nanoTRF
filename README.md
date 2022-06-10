@@ -162,7 +162,7 @@ NanoTRF works with FASTA and FASTQ formats.
 
 ## <a name="output"></a>Output
 
-### <a name="output"></a>Tabular file
+### <a name="output"></a>Tabular file `clust_abund.tab`
 
 NanoTRF generates output in tabular format:
 | №   | Column name | Description | 
