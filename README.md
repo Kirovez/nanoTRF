@@ -87,12 +87,83 @@ python3 ./nanoTRF.py -r test.fasta -o ./test/ -T TH.tab
 ## <a name="cmd"></a>Command and options
 ```
 
+usage: nanoTRF.py [-h] [-r READS] [-pTH PATH_TH] [-T RUN_TH] [-cap CAP3] [-diamond DIAMOND] [-o OUT_DIRECTORY]
+                  [-b BLAST] [-mb MAKEDB] [-w WORDSIZE] [-w_f WORDSIZE_F] [-ev EVALUE] [-mid MIN_ID]
+                  [-bld QUERY_SBJ_LENGTH_DIFFERENCES_ALLOWED] [-mad MIN_ABUNDANCY_TO_DRAW] [-m MIN_COPY]
+                  [-nano NANO_TRF] [-tab NANO_TAB] [-rexdb_fasta REXDB_FASTA] [-rexdb_tab REXDB_TAB] [-th THREADS]
+                  [-lg LOG_FILE] [-mOVe MIN_OVERLAP] [-ca PERC_ABUND] [-c] [-maskws MASK_BLAST_WORD_SIZE]
+                  [-maskcov MASK_BLAST_QUERY_COVERAGE] [-maskiden MASK_BLAST_IDENTITY]
+
+A tool to clustering sequences in fasta file and searching consensus among the many sequences for each cluster
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -r READS, --reads READS
+                        Path to FastQ or Fasta file
+  -pTH PATH_TH, --path_TH PATH_TH
+                        Path to the location of the TideHunter
+  -T RUN_TH, --run_th RUN_TH
+                        If you do not want to run TideHunter again and you have table file (-f 2 option in Tide
+                        Hunter), type the path to this file here
+  -cap CAP3, --cap3 CAP3
+                        Path to the location of the Cap3
+  -diamond DIAMOND, --diamond DIAMOND
+                        Path to the location of DIAMOND
+  -o OUT_DIRECTORY, --out_directory OUT_DIRECTORY
+                        Path to work directory for output files where will be saved
+  -b BLAST, --blast BLAST
+                        Path to blastn executabled
+  -mb MAKEDB, --makedb MAKEDB
+                        Path to makeblastdb executable
+  -w WORDSIZE, --wordsize WORDSIZE
+                        Word size for wordfinder algorithm (length of best perfect match)
+  -w_f WORDSIZE_F, --wordsize_f WORDSIZE_F
+                        Word size for Reblusting(length of best perfect match)
+  -ev EVALUE, --evalue EVALUE
+                        Expectation value (E) threshold for saving hits
+  -mid MIN_ID, --min_id MIN_ID
+                        minimum identity between monomers to be selected for clustering
+  -bld QUERY_SBJ_LENGTH_DIFFERENCES_ALLOWED, --query_sbj_length_differences_allowed QUERY_SBJ_LENGTH_DIFFERENCES_ALLOWED
+                        maximum differences in length between query and subject
+  -mad MIN_ABUNDANCY_TO_DRAW, --min_abundancy_to_draw MIN_ABUNDANCY_TO_DRAW
+                        Minimum genome abundancy for cluster of repeats to be drawn
+  -m MIN_COPY, --min_copy MIN_COPY
+                        The minimum number of TRs copy in the data
+  -nano NANO_TRF, --nano_trf NANO_TRF
+                        File name with consensus sequences, default name - nanoTRF.fasta
+  -tab NANO_TAB, --nano_tab NANO_TAB
+                        Table file with the TRs abundancy
+  -rexdb_fasta REXDB_FASTA, --rexdb_fasta REXDB_FASTA
+                        Fasta file with the RExDB protein sequences
+  -rexdb_tab REXDB_TAB, --rexdb_tab REXDB_TAB
+                        Table file with the RExDB annotation
+  -th THREADS, --threads THREADS
+                        Number of threads for running the module Blast and TideHunter
+  -lg LOG_FILE, ---log_file LOG_FILE
+                        This file list analysis parameters, modules and files, contains messages generated on the
+                        various stages of the NanoTRF work. It allows tracking events that happens when NanoTRF runs.
+                        Default =loging.log
+  -mOVe MIN_OVERLAP, --min_Overlap MIN_OVERLAP
+                        Number of overlapping nucleotides between repeats in one cluster
+  -ca PERC_ABUND, --perc_abund PERC_ABUND
+                        Minimum value of the TR cluster abundancy
+  -c, --cleanup         Remove unncessary large files and directories from working directory
+  -maskws MASK_BLAST_WORD_SIZE, --mask_blast_word_size MASK_BLAST_WORD_SIZE
+                        word size of blastn masking of raw reads by cluster contig sequences
+  -maskcov MASK_BLAST_QUERY_COVERAGE, --mask_blast_query_coverage MASK_BLAST_QUERY_COVERAGE
+                        query (contig sequence) coverage in blastn masking of raw reads by cluster contig sequences
+  -maskiden MASK_BLAST_IDENTITY, --mask_blast_identity MASK_BLAST_IDENTITY
+                        minimum identity between query (contig sequence) and raw reads in blastn masking of raw reads
+                        by cluster contig sequences
 ```
 ## <a name="input_output"></a>Input
+
 NanoTRF works with FASTA and FASTQ formats.
 
 ## <a name="output"></a>Output
+
 ### <a name="output"></a>Tabular file
+
 NanoTRF generates output in tabular format:
 | №   | Column name | Description | 
 |:---:|   :---      | ---        |
