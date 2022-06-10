@@ -182,7 +182,9 @@ NanoTRF generates output in tabular format:
 NanoTRF generates 'consensus.fasta' file which contains TRs consensus sequences assembled by Cap3. 
 
 
-### <a name="output"></a>Html file with the information from tabular file and some pictures including graph layout, read coverage histogram and read coverage pie chart
+### <a name="output"></a>Html file 
+
+This file containes the information from tabular file and some pictures including graph layout, read coverage histogram and read coverage pie chart
 
 ## <a name="authors"></a>Authors
 
