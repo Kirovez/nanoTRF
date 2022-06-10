@@ -40,36 +40,7 @@ For running nanoTRF, please activate the conda environment:
  conda activate nanoTRF
  ```
  Your environment is ready to be used!
- 
-### <a name="conda"></a>Pre-built binary executable file for Linux/Unix
 
-If you meet any issue with creating the environment, please try the pre-built binary file:
-
-```
-wget https:/https://github.com/Kirovez/nanoTRF/releases/download/v1.0.0/nanoTRF-v1.0.0.tar.gz
-tar -zxvf nanoTRF-v1.0.0.tar.gz && cd TideHunter-v1.0.0
-```
-**We recommended create a folder and running the pipeline in the previously established directory**
-
-Before you start, you need to ensure that all programs and packages specified below are already installed on your computer. For running nanoTRF, you will need to select the path of the program through special flags:
-
-- blastn and makeblastdb programs. Users can set the paths to these programs via **-b** and **-mb** flags, respectively
-- TideHunter program. It is recommended to download the [latest release of TideHunter](https://github.com/yangao07/TideHunter/releases). Users can set the paths to these programs via **-pTH** flags
-- Canu program. The latest release [can be download here](http://github.com/marbl/canu/releases). The paths to these programs can be set via **-cu** flags
-- java
-- python >= v3.6
-- Python packages to be installed: biopython, networkx. To install these packages, run the following command
-```
- pip install matplotlib biopython networkx python-louvain
-```
-or
-```
-pip3 install matplotlib biopython networkx python-louvain
-```
-Important note! Suppose you have a community python module installed. In that case, you need to delete it because it interferes with the python-louvain module used by nanoTRF. Use this command to delete the community module:
-```
-pip3 uninstall community
-```
 
 
 ## <a name="usage"></a>Usage
