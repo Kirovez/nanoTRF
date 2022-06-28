@@ -13,8 +13,8 @@ tar -zxvf nanoTRF.tar.gz
 
 - [Introduction](#introduction)
 - [Installation](#install)
-  - [Installing nanoTRF via conda](#conda)
-  - [Building nanoTRF from source files](#building)
+  - [Installing NanoTRF via conda](#conda)
+  - [Building NanoTRF from source files](#building)
 - [Getting Started](#getting) 
 - [Usage](#usage)
 - [Commands and options](#cmd)
@@ -30,12 +30,12 @@ NanoTRF is a software tool to *de novo* search high-copy tandem repeats designed
 
 ## <a name="install"></a>Installation
 
-### <a name="conda"></a>Installing nanoTRF via conda
-On Linux/Unix, nanoTRF can be installed via creating an environment from an environment.yml file:
+### <a name="conda"></a>Installing NanoTRF via conda
+On Linux/Unix, NanoTRF can be installed via creating an environment from an environment.yml file:
  ```
  conda env create -f nanoTRF.yml
  ```
-For running nanoTRF, please activate the conda environment:
+For running NanoTRF, please activate the conda environment:
  ```
  conda activate nanoTRF
  ```
@@ -49,7 +49,7 @@ To generate consensus sequences in FASTA format file (with usage default optiona
 ```
 python3 ./nanoTRF.py -r ./test_seq/test_4th_Linum.fasta -pTH TideHunter  -o ./test/ -mad 0.01
 ```
-If TideHunter output table (run with -f option) was generated before then you can pass this file via -T option and nanoTRF will skip TideHunter step
+If TideHunter output table (run with -f option) was generated before then you can pass this file via -T option and NanoTRF will skip TideHunter step
 
 ```
 python3 ./nanoTRF.py -r ./test_seq/test_4th_Linum.fasta -pTH TideHunter  -o ./test/ -mad 0.01 -T TH.tab
